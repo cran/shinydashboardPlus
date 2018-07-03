@@ -122,127 +122,127 @@ gradientBox <- function(..., title = NULL, icon = NULL, gradientColor = NULL,
 
 
 
-#' @title AdminLTE2 mail form
-#'
-#' @description Create a mail form
-#'
-#' @param ... message text.
-#' @param mailto person who should receive the mail.
-#'
-#' @author David Granjon, \email{dgranjon@@ymail.com}
-#'
-#' @examples
-#' if (interactive()) {
-#'  library(shiny)
-#'  library(shinydashboard)
-#'  shinyApp(
-#'   ui = dashboardPage(
-#'     dashboardHeader(),
-#'     dashboardSidebar(),
-#'     dashboardBody(
-#'      box(
-#'       title = "Mail box demo",
-#'       mailForm(mailto = "dgranjon@ymail.com")
-#'      )
-#'     ),
-#'     title = "mailForm"
-#'   ),
-#'   server = function(input, output) { }
-#'  )
-#' }
-#'
-#' @export
-mailForm <- function(..., mailto = "#") {
-  shiny::tags$form(
-    action = paste0("mailto:", mailto),
-    method = "post",
-    
-    # subject input
-    shiny::tags$div(
-      class = "form-group",
-      shiny::tags$input(
-        type = "text",
-        class = "form-control",
-        name = "subject",
-        placeholder = "Subject"
-      )
-    ),
-    
-    # body
-    shiny::tags$div(
-      
-      ## mail toolbar
-      # shiny::tags$ul(
-      #   class = "wysihtml5-toolbar",
-      #   shiny::tags$li(
-      #     class = "dropdown",
-      #     shiny::tags$a(
-      #       class = "btn btn-default dropdown-toggle",
-      #       `data-toggle` = "dropdown",
-      #       `aria-expanded` = "false",
-      #       
-      #     )
-      #   )
-      # ),
-      
-      shiny::tags$textarea(
-        class = "textarea",
-        style = "width: 100%; height: 125px; font-size: 14px; line-height: 18px; 
-                 border: 1px solid rgb(221, 221, 221); padding: 10px; display: none;",
-        placeholder = "Message"
-      ),
-      
-      shiny::tags$input(type = "hidden", name = "_wysihtml5_mode", value = "1"),
-      
-      shiny::tags$iframe(
-        class = "wysihtml5-sandbox",
-        security = "restricted",
-        allowtransparency = "true",
-        frameborder = "0",
-        width = "0",
-        height = "0",
-        marginwidth = "0",
-        marginheight = "0",
-        style = "display: inline-block; background-color: rgb(255, 255, 255); 
-                border-collapse: separate; border: 1px solid rgb(221, 221, 221); 
-                clear: none; float: none; margin: 0px; outline: rgb(51, 51, 51) none 0px; 
-                outline-offset: 0px; padding: 10px; position: static; top: auto; left: auto; 
-                right: auto; bottom: auto; z-index: auto; vertical-align: baseline; 
-                text-align: start; box-sizing: border-box; -webkit-box-shadow: none; 
-                box-shadow: none; border-top-right-radius: 0px; border-bottom-right-radius: 0px; 
-                border-bottom-left-radius: 0px; border-top-left-radius: 0px; width: 100%; height: 125px;",
-        
-        shiny::tags$html(
-          shiny::tags$body(
-            marginwidth = "0",
-            marginheight = "0",
-            class = "textarea wysihtml5-editor",
-            spellcheck = "true",
-            contenteditable = "true",
-            style = "font-variant-ligatures: normal; font-variant-caps: normal; 
-                     font-variant-east-asian: normal; font-variant-position: normal; 
-                     background-color: rgb(255, 255, 255); color: rgb(51, 51, 51); 
-                     cursor: auto; font-family: &quot;Source Sans Pro&quot;, 
-                     &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; 
-                     font-size: 14px; font-style: normal; font-weight: normal; line-height: 18px; 
-                     letter-spacing: normal; text-align: start; text-decoration: none; text-indent: 0px; 
-                     text-rendering: auto; word-break: normal; word-wrap: break-word; word-spacing: 0px;",
-            ...
-          )
-        )
-      )
-      
-    ),
-    
-    # send button
-    shiny::tags$input(
-      type = "submit",
-      #class = "pull-right btn btn-default",
-      value = "Send"
-      #shiny::tags$i(class = "fa fa-arrow-circle-right")
-    )
-  )
-}
+# #' @title AdminLTE2 mail form
+# #'
+# #' @description Create a mail form
+# #'
+# #' @param ... message text.
+# #' @param mailto person who should receive the mail.
+# #'
+# #' @author David Granjon, \email{dgranjon@@ymail.com}
+# #'
+# #' @examples
+# #' if (interactive()) {
+# #'  library(shiny)
+# #'  library(shinydashboard)
+# #'  shinyApp(
+# #'   ui = dashboardPage(
+# #'     dashboardHeader(),
+# #'     dashboardSidebar(),
+# #'     dashboardBody(
+# #'      box(
+# #'       title = "Mail box demo",
+# #'       mailForm(mailto = "dgranjon@ymail.com")
+# #'      )
+# #'     ),
+# #'     title = "mailForm"
+# #'   ),
+# #'   server = function(input, output) { }
+# #'  )
+# #' }
+# #'
+# #' @export
+# mailForm <- function(..., mailto = "#") {
+#   shiny::tags$form(
+#     action = paste0("mailto:", mailto),
+#     method = "post",
+#     
+#     # subject input
+#     shiny::tags$div(
+#       class = "form-group",
+#       shiny::tags$input(
+#         type = "text",
+#         class = "form-control",
+#         name = "subject",
+#         placeholder = "Subject"
+#       )
+#     ),
+#     
+#     # body
+#     shiny::tags$div(
+#       
+#       ## mail toolbar
+#       # shiny::tags$ul(
+#       #   class = "wysihtml5-toolbar",
+#       #   shiny::tags$li(
+#       #     class = "dropdown",
+#       #     shiny::tags$a(
+#       #       class = "btn btn-default dropdown-toggle",
+#       #       `data-toggle` = "dropdown",
+#       #       `aria-expanded` = "false",
+#       #       
+#       #     )
+#       #   )
+#       # ),
+#       
+#       shiny::tags$textarea(
+#         class = "textarea",
+#         style = "width: 100%; height: 125px; font-size: 14px; line-height: 18px; 
+#                  border: 1px solid rgb(221, 221, 221); padding: 10px; display: none;",
+#         placeholder = "Message"
+#       ),
+#       
+#       shiny::tags$input(type = "hidden", name = "_wysihtml5_mode", value = "1"),
+#       
+#       shiny::tags$iframe(
+#         class = "wysihtml5-sandbox",
+#         security = "restricted",
+#         allowtransparency = "true",
+#         frameborder = "0",
+#         width = "0",
+#         height = "0",
+#         marginwidth = "0",
+#         marginheight = "0",
+#         style = "display: inline-block; background-color: rgb(255, 255, 255); 
+#                 border-collapse: separate; border: 1px solid rgb(221, 221, 221); 
+#                 clear: none; float: none; margin: 0px; outline: rgb(51, 51, 51) none 0px; 
+#                 outline-offset: 0px; padding: 10px; position: static; top: auto; left: auto; 
+#                 right: auto; bottom: auto; z-index: auto; vertical-align: baseline; 
+#                 text-align: start; box-sizing: border-box; -webkit-box-shadow: none; 
+#                 box-shadow: none; border-top-right-radius: 0px; border-bottom-right-radius: 0px; 
+#                 border-bottom-left-radius: 0px; border-top-left-radius: 0px; width: 100%; height: 125px;",
+#         
+#         shiny::tags$html(
+#           shiny::tags$body(
+#             marginwidth = "0",
+#             marginheight = "0",
+#             class = "textarea wysihtml5-editor",
+#             spellcheck = "true",
+#             contenteditable = "true",
+#             style = "font-variant-ligatures: normal; font-variant-caps: normal; 
+#                      font-variant-east-asian: normal; font-variant-position: normal; 
+#                      background-color: rgb(255, 255, 255); color: rgb(51, 51, 51); 
+#                      cursor: auto; font-family: &quot;Source Sans Pro&quot;, 
+#                      &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; 
+#                      font-size: 14px; font-style: normal; font-weight: normal; line-height: 18px; 
+#                      letter-spacing: normal; text-align: start; text-decoration: none; text-indent: 0px; 
+#                      text-rendering: auto; word-break: normal; word-wrap: break-word; word-spacing: 0px;",
+#             ...
+#           )
+#         )
+#       )
+#       
+#     ),
+#     
+#     # send button
+#     shiny::tags$input(
+#       type = "submit",
+#       #class = "pull-right btn btn-default",
+#       value = "Send"
+#       #shiny::tags$i(class = "fa fa-arrow-circle-right")
+#     )
+#   )
+# }
 
 
 
@@ -426,6 +426,9 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
 #' @param enable_label Whether to display a label in the boxtool.
 #' @param label_text label text.
 #' @param label_status status of the box label: "danger", "success", "info", "primary", "warning".
+#' @param enable_dropdown Whether to display a dropdown menu in the boxtool. FALSE by default.
+#' @param dropdown_icon Dropdown icon. "wrench" by default.
+#' @param dropdown_menu List of items in the the boxtool dropdown menu. Use dropdownItemList().
 #' @param footer_padding TRUE by default: whether the footer has margin or not.
 #'
 #' @family boxes
@@ -443,12 +446,19 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
 #'      dashboardBody(
 #'       fluidRow(
 #'        boxPlus(
-#'         title = "Closable Box", 
+#'         title = "Closable Box with dropdown", 
 #'          closable = TRUE, 
-#'          label_status = "danger",
 #'          status = "warning", 
 #'          solidHeader = FALSE, 
 #'          collapsible = TRUE,
+#'          enable_dropdown = TRUE,
+#'          dropdown_icon = "wrench",
+#'          dropdown_menu = dropdownItemList(
+#'           dropdownItem(url = "http://www.google.com", name = "Link to google"),
+#'           dropdownItem(url = "#", name = "item 2"),
+#'           dropdownDivider(),
+#'           dropdownItem(url = "#", name = "item 3")
+#'          ),
 #'          p("Box Content")
 #'        ),
 #'        boxPlus(
@@ -472,7 +482,9 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
 boxPlus <- function(..., title = NULL, footer = NULL, status = NULL, solidHeader = FALSE, 
                      background = NULL, width = 6, height = NULL, collapsible = FALSE, 
                      collapsed = FALSE, closable = TRUE, enable_label = FALSE,
-                     label_text = NULL, label_status = "primary", footer_padding = TRUE) 
+                     label_text = NULL, label_status = "primary", enable_dropdown = FALSE,
+                     dropdown_icon = "wrench", dropdown_menu = NULL,
+                    footer_padding = TRUE) 
 {
   boxClass <- "box"
   if (solidHeader || !is.null(background)) {
@@ -530,10 +542,24 @@ boxPlus <- function(..., title = NULL, footer = NULL, status = NULL, solidHeader
   if (enable_label) {
     labelTag <- dashboardLabel(label_text, status = label_status)
   }
+
+  dropdownTag <- NULL
+  if (enable_dropdown) {
+    dropdownTag <- shiny::tags$div(
+      class = "btn-group",
+      shiny::tags$button(
+        type = "button",
+        class = "btn btn-box-tool dropdown-toggle",
+        `data-toggle` = "dropdown",
+        shiny::icon(dropdown_icon)
+      ),
+      shiny::tagList(dropdown_menu)
+    )
+  }
   
   
   # update boxToolTag
-  boxToolTag <- shiny::tagAppendChildren(boxToolTag, labelTag, collapseTag, closableTag)
+  boxToolTag <- shiny::tagAppendChildren(boxToolTag, labelTag, dropdownTag, collapseTag, closableTag)
   
   headerTag <- NULL
   if (!is.null(titleTag) || !is.null(collapseTag)) {
@@ -548,6 +574,47 @@ boxPlus <- function(..., title = NULL, footer = NULL, status = NULL, solidHeader
 
 
 
+#' Create a box dropdown item list
+#'
+#' Can be used to add dropdown items to a boxtool.
+#'
+#' @param ... Slot for dropdownItem.
+#'
+#' @export
+dropdownItemList <- function(...) {
+  shiny::tags$ul(
+    class = "dropdown-menu",
+    role = "menu",
+    ...
+  )
+}
+
+
+#' Create a box dropdown item 
+#'
+#' @param url Target url or page.
+#' @param name Menu name.
+#'
+#' @export
+dropdownItem <- function(url = NULL, name = NULL) {
+  shiny::tags$li(
+    shiny::tags$a(
+      href = url,
+      target = "_blank",
+      name 
+    )
+  )
+}
+
+
+#' Create a box dropdown divider 
+#'
+#' @note Useful to separate 2 sections of dropdown items.
+#'
+#' @export
+dropdownDivider <- function() {
+  shiny::tags$li(class = "divider")
+}
 
 
 #' @title AdminLTE2 social box

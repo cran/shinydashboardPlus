@@ -9,7 +9,7 @@ library(shinyWidgets)
 shinyApp(
   ui = dashboardPagePlus(
     dashboardHeaderPlus(
-      title = "shinyDashboardPlus",
+      title = "shinydashboardPlus",
       enable_rightsidebar = TRUE,
       rightSidebarIcon = "bars"
     ),
@@ -34,39 +34,27 @@ shinyApp(
     ),
     rightsidebar = rightSidebar(
       background = "dark",
-      rightSidebarTabList(
-        rightSidebarTabItem(
-          id = 1,
-          icon = "desktop"
-        ),
-        rightSidebarTabItem(
-          id = 2
-        ),
-        rightSidebarTabItem(
-          id = 3,
-          icon = "paint-brush"
+      rightSidebarTabContent(
+        id = 1,
+        title = "Tab 1",
+        icon = "desktop",
+        active = TRUE,
+        sliderInput(
+          "inputsidebar1", 
+          "Number of observations:",
+          min = 0, max = 1000, value = 500
         )
       ),
-      rigthSidebarPanel(
-        rightSidebarTabContent(
-          id = 1,
-          title = "Tab 1",
-          sliderInput(
-            "inputsidebar1", 
-            "Number of observations:",
-            min = 0, max = 1000, value = 500
-          )
-        ),
-        rightSidebarTabContent(
-          id = 2,
-          title = "Tab 2",
-          textInput("inputsidebar2", "Caption", "Data Summary")
-        ),
-        rightSidebarTabContent(
-          id = 3,
-          title = "Tab 3",
-          numericInput("inputsidebar3", "Observations:", 10, min = 1, max = 100)
-        )
+      rightSidebarTabContent(
+        id = 2,
+        title = "Tab 2",
+        textInput("inputsidebar2", "Caption", "Data Summary")
+      ),
+      rightSidebarTabContent(
+        id = 3,
+        icon = "paint-brush",
+        title = "Tab 3",
+        numericInput("inputsidebar3", "Observations:", 10, min = 1, max = 100)
       )
     ),
     dashboardBody(
@@ -124,23 +112,11 @@ shinyApp(
             body = dashboardBody(),
             rightsidebar = rightSidebar(
             background = "dark",
-            rightSidebarTabList(
-            rightSidebarTabItem(
-            id = 1,
-            icon = "desktop"
-            ),
-            rightSidebarTabItem(
-            id = 2
-            ),
-            rightSidebarTabItem(
-            id = 3,
-            icon = "paint-brush"
-            )
-            ),
-            rigthSidebarPanel(
             rightSidebarTabContent(
             id = 1,
             title = "Tab 1",
+            icon = "desktop",
+            active = TRUE,
             sliderInput(
             "obs", 
             "Number of observations:",
@@ -154,9 +130,9 @@ shinyApp(
             ),
             rightSidebarTabContent(
             id = 3,
+            icon = "paint-brush",
             title = "Tab 3",
             numericInput("obs", "Observations:", 10, min = 1, max = 100)
-            )
             )
             ),
             title = "Right Sidebar"
@@ -180,32 +156,46 @@ shinyApp(
           fluidRow(
             # demo enhanced classic boxes from shinydashboard
             boxPlus(
-              title = "Closable Box", 
+              title = "Closable Box with dropdown", 
               closable = TRUE, 
-              label_status = "danger",
               status = "warning", 
               solidHeader = FALSE, 
               collapsible = TRUE,
+              enable_dropdown = TRUE,
+              dropdown_icon = "wrench",
+              dropdown_menu = dropdownItemList(
+                dropdownItem(url = "http://www.google.com", name = "Link to google"),
+                dropdownItem(url = "#", name = "item 2"),
+                dropdownDivider(),
+                dropdownItem(url = "#", name = "item 3")
+              ),
               p("Box Content")
             ),
             
             aceEditor(
               theme = "vibrant_ink",
               mode = "r",
-              height = "200px",
+              height = "300px",
               outputId = "boxplus1_code",
               readOnly = TRUE,
               value = paste(
                 style_text(
                   'boxPlus(
-                  title = "Closable Box", 
-                  closable = TRUE, 
-                  label_status = "danger",
-                  status = "warning", 
-                  solidHeader = FALSE, 
-                  collapsible = TRUE,
-                  p("Box Content")
-                )'
+                   title = "Closable Box with dropdown", 
+                    closable = TRUE, 
+                    status = "warning", 
+                    solidHeader = FALSE, 
+                    collapsible = TRUE,
+                    enable_dropdown = TRUE,
+                    dropdown_icon = "wrench",
+                    dropdown_menu = dropdownItemList(
+                     dropdownItem(url = "http://www.google.com", name = "Link to google"),
+                     dropdownItem(url = "#", name = "item 2"),
+                     dropdownDivider(),
+                     dropdownItem(url = "#", name = "item 3")
+                    ),
+                    p("Box Content")
+                  )'
                 ), 
                 collapse = "\n"
               )
@@ -1914,6 +1904,148 @@ shinyApp(
                     title_url = "http://google.com",
                     "This is the content"
                    )'
+                  ), 
+                  collapse = "\n"
+                )
+              )
+              
+            ),
+            
+            br(),
+            column(
+              width = 12,
+              align = "center",
+              h1("rightSidebarMenu()")
+            ),
+            br(),
+            
+            fluidRow(
+              # demo rightSidebarMenu
+              box(
+                title = "rightSidebarMenu",
+                rightSidebarMenu(
+                  rightSidebarMenuItem(
+                    icon = menuIcon(
+                      name = "birthday-cake",
+                      color = "red"
+                    ),
+                    info = menuInfo(
+                      title = "Langdon's Birthday",
+                      description = "Will be 23 on April 24th"
+                    )
+                  ),
+                  rightSidebarMenuItem(
+                    icon = menuIcon(
+                      name = "user",
+                      color = "yellow"
+                    ),
+                    info = menuInfo(
+                      title = "Frodo Updated His Profile",
+                      description = "New phone +1(800)555-1234"
+                    )
+                  )
+                )
+              ),
+              
+              aceEditor(
+                theme = "vibrant_ink",
+                mode = "r",
+                height = "400px",
+                outputId = "rightSidebarMenu_code",
+                readOnly = TRUE,
+                value = paste(
+                  style_text(
+                    'box(
+                    title = "rightSidebarMenu example",
+                    rightSidebarMenu(
+                    rightSidebarMenuItem(
+                    icon = menuIcon(
+                    name = "birthday-cake",
+                    color = "red"
+                    ),
+                    info = menuInfo(
+                    title = "Langdon\'s Birthday",
+                    description = "Will be 23 on April 24th"
+                    )
+                    ),
+                    rightSidebarMenuItem(
+                    icon = menuIcon(
+                    name = "user",
+                    color = "yellow"
+                    ),
+                    info = menuInfo(
+                    title = "Frodo Updated His Profile",
+                    description = "New phone +1(800)555-1234"
+                    )
+                    )
+                    )
+                  )'
+                  ), 
+                  collapse = "\n"
+                )
+              )
+              
+            ),
+            
+            br(),
+            column(
+              width = 12,
+              align = "center",
+              h1("verticalProgress()")
+            ),
+            br(),
+            
+            fluidRow(
+              # demo rightSidebarMenu
+              box(
+                title = "verticalProgress",
+                verticalProgress(
+                  value = 10,
+                  striped = TRUE,
+                  active = TRUE
+                ),
+                verticalProgress(
+                  value = 50,
+                  active = TRUE,
+                  status = "warning",
+                  size = "xs"
+                ),
+                verticalProgress(
+                  value = 20,
+                  status = "danger",
+                  size = "sm",
+                  height = "60%"
+                )
+              ),
+              
+              aceEditor(
+                theme = "vibrant_ink",
+                mode = "r",
+                height = "350px",
+                outputId = "verticalProgress_code",
+                readOnly = TRUE,
+                value = paste(
+                  style_text(
+                    'box(
+                     title = "verticalProgress",
+                     verticalProgress(
+                       value = 10,
+                       striped = TRUE,
+                       active = TRUE
+                     ),
+                     verticalProgress(
+                       value = 50,
+                       active = TRUE,
+                       status = "warning",
+                       size = "xs"
+                     ),
+                     verticalProgress(
+                       value = 20,
+                       status = "danger",
+                       size = "sm",
+                       height = "60%"
+                     )
+                    )'
                   ), 
                   collapse = "\n"
                 )

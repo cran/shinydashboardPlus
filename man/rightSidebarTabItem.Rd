@@ -4,12 +4,14 @@
 \alias{rightSidebarTabItem}
 \title{AdminLTE2 right sidebar tab item}
 \usage{
-rightSidebarTabItem(id, icon = "database")
+rightSidebarTabItem(id, icon, active)
 }
 \arguments{
-\item{id}{unique item id. If id = 1, the tab is set to active.}
+\item{id}{unique item id.}
 
 \item{icon}{tab icon.}
+
+\item{active}{Whether the tab item is active or not.}
 }
 \description{
 This creates a right sidebar tab item to be inserted in a rightSidebarTabList.

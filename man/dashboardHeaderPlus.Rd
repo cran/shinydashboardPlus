@@ -8,7 +8,7 @@ dashboardHeaderPlus(..., title = NULL, titleWidth = NULL, disable = FALSE,
   .list = NULL, enable_rightsidebar = FALSE, rightSidebarIcon = "gears")
 }
 \arguments{
-\item{...}{Items to put in the header. Should be \code{\link{dropdownMenu}}s.}
+\item{...}{Items to put in the header. Should be \code{\link[shinydashboard]{dropdownMenu}}s.}
 
 \item{title}{An optional title to show in the header bar.. By default, this
 will also be used as the title shown in the browser's title bar. If you
@@ -37,6 +37,7 @@ on the right side.
 if (interactive()) {
 library(shiny)
 library(shinydashboard)
+library(shinydashboardPlus)
 
 # A dashboard header with 3 dropdown menus
 header <- dashboardHeader(
@@ -103,5 +104,5 @@ shinyApp(
 }
 }
 \seealso{
-\code{\link{dropdownMenu}}
+\code{\link[shinydashboard]{dropdownMenu}}
 }

@@ -8,6 +8,7 @@ boxPlus(..., title = NULL, footer = NULL, status = NULL,
   solidHeader = FALSE, background = NULL, width = 6, height = NULL,
   collapsible = FALSE, collapsed = FALSE, closable = TRUE,
   enable_label = FALSE, label_text = NULL, label_status = "primary",
+  enable_dropdown = FALSE, dropdown_icon = "wrench", dropdown_menu = NULL,
   footer_padding = TRUE)
 }
 \arguments{
@@ -49,6 +50,12 @@ the user to collapse the box.}
 
 \item{label_status}{status of the box label: "danger", "success", "info", "primary", "warning".}
 
+\item{enable_dropdown}{Whether to display a dropdown menu in the boxtool. FALSE by default.}
+
+\item{dropdown_icon}{Dropdown icon. "wrench" by default.}
+
+\item{dropdown_menu}{List of items in the the boxtool dropdown menu. Use dropdownItemList().}
+
 \item{footer_padding}{TRUE by default: whether the footer has margin or not.}
 }
 \description{
@@ -67,12 +74,19 @@ if (interactive()) {
      dashboardBody(
       fluidRow(
        boxPlus(
-        title = "Closable Box", 
+        title = "Closable Box with dropdown", 
          closable = TRUE, 
-         label_status = "danger",
          status = "warning", 
          solidHeader = FALSE, 
          collapsible = TRUE,
+         enable_dropdown = TRUE,
+         dropdown_icon = "wrench",
+         dropdown_menu = dropdownItemList(
+          dropdownItem(url = "http://www.google.com", name = "Link to google"),
+          dropdownItem(url = "#", name = "item 2"),
+          dropdownDivider(),
+          dropdownItem(url = "#", name = "item 3")
+         ),
          p("Box Content")
        ),
        boxPlus(
