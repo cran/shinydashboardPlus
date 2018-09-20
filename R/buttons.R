@@ -47,7 +47,7 @@
 #'       )
 #'      )
 #'     ),
-#'     title = "Buttons"
+#'     title = "App buttons"
 #'   ),
 #'   server = function(input, output) { }
 #'  )
@@ -65,7 +65,8 @@ appButton <- function(url = NULL, label = NULL, icon = NULL, enable_badge = FALS
     },
     shiny::tags$i(class = icon),
     label,
-    href = url
+    href = url,
+    target = "_blank"
   )
 }
 
@@ -102,7 +103,7 @@ appButton <- function(url = NULL, label = NULL, icon = NULL, enable_badge = FALS
 #'       )
 #'      )
 #'     ),
-#'     title = "Description Blocks"
+#'     title = "Social Buttons"
 #'   ),
 #'   server = function(input, output) { }
 #'  )
@@ -116,6 +117,7 @@ socialButton <- function(url, type = NULL) {
   
   shiny::tags$a(
     href = url,
+    target = "_blank",
     class = cl,
     shiny::icon(type)
   )

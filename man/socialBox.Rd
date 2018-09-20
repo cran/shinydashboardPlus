@@ -4,9 +4,9 @@
 \alias{socialBox}
 \title{AdminLTE2 social box}
 \usage{
-socialBox(..., src = NULL, title = NULL, subtitle = NULL, width = 6,
-  height = NULL, collapsible = TRUE, closable = TRUE, comments = NULL,
-  footer = NULL, footer_padding = TRUE)
+socialBox(..., src = NULL, title = NULL, subtitle = NULL,
+  width = 6, height = NULL, collapsible = TRUE, closable = TRUE,
+  comments = NULL, footer = NULL, footer_padding = TRUE)
 }
 \arguments{
 \item{...}{body content. May include attachmentBlock for instance.}
@@ -55,18 +55,14 @@ if (interactive()) {
        "This is the content"
       ),
       comments = tagList(
-       boxComment(
-        src = "https://adminlte.io/themes/AdminLTE/dist/img/user3-128x128.jpg",
-        title = "Comment 1",
-        date = "01.05.2018",
-        "The first comment"
-       ),
-       boxComment(
-        src = "https://adminlte.io/themes/AdminLTE/dist/img/user5-128x128.jpg",
-        title = "Comment 2",
-        date = "01.05.2018",
-        "The second comment"
-       )
+       lapply(X = 1:10, FUN = function(i) {
+        boxComment(
+          src = "https://adminlte.io/themes/AdminLTE/dist/img/user3-128x128.jpg",
+          title = paste("Comment", i),
+          date = "01.05.2018",
+          paste0("The ", i, "-th comment")
+        )
+       })
       ),
       footer = "The footer here!"
      )

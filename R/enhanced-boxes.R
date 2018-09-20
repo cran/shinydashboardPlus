@@ -429,6 +429,11 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
 #' @param enable_dropdown Whether to display a dropdown menu in the boxtool. FALSE by default.
 #' @param dropdown_icon Dropdown icon. "wrench" by default.
 #' @param dropdown_menu List of items in the the boxtool dropdown menu. Use dropdownItemList().
+#' @param enable_sidebar Whether to display the box sidebar. FALSE by default.
+#' @param sidebar_content Box sidebar content, if any.
+#' @param sidebar_width Box sidebar width in percentage. 25\% by default. Numeric value between 0 and 100.
+#' @param sidebar_background Box sidebar background color. Dark by default.
+#' @param sidebar_start_open Whether the box sidebar is open at start. FALSE by default.
 #' @param footer_padding TRUE by default: whether the footer has margin or not.
 #'
 #' @family boxes
@@ -477,15 +482,56 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
 #'    ),
 #'    server = function(input, output) {}
 #'  )
+#'  
+#'  # boxPlus with sidebar
+#'  shinyApp(
+#'   ui = dashboardPagePlus(
+#'     dashboardHeaderPlus(),
+#'     dashboardSidebar(),
+#'     dashboardBody(
+#'       setShadow("box"),
+#'       fluidRow(
+#'         boxPlus(
+#'           title = "Closable Box with dropdown", 
+#'           closable = TRUE, 
+#'           status = "warning", 
+#'           solidHeader = FALSE, 
+#'           collapsible = TRUE,
+#'           enable_sidebar = TRUE,
+#'           sidebar_width = 25,
+#'           sidebar_start_open = TRUE,
+#'           sidebar_content = sliderInput(
+#'            "obs", 
+#'            "Number of observations:",
+#'            min = 0, 
+#'            max = 1000, 
+#'            value = 500
+#'           ),
+#'           plotOutput("distPlot")
+#'         )
+#'       )
+#'     )
+#'   ),
+#'   server = function(input, output) {
+#'     output$distPlot <- renderPlot({
+#'       hist(rnorm(input$obs))
+#'     })
+#'   }
+#'  )
 #' }
 #' @export
 boxPlus <- function(..., title = NULL, footer = NULL, status = NULL, solidHeader = FALSE, 
                      background = NULL, width = 6, height = NULL, collapsible = FALSE, 
                      collapsed = FALSE, closable = TRUE, enable_label = FALSE,
                      label_text = NULL, label_status = "primary", enable_dropdown = FALSE,
-                     dropdown_icon = "wrench", dropdown_menu = NULL,
-                    footer_padding = TRUE) 
+                     dropdown_icon = "wrench", dropdown_menu = NULL, enable_sidebar = FALSE,
+                     sidebar_content = NULL, sidebar_width = 25, sidebar_background = "#222d32", 
+                     sidebar_start_open = FALSE, footer_padding = TRUE) 
 {
+  
+  if (sidebar_width < 0 || sidebar_width > 100) 
+    stop("The box sidebar should be between 0 and 100")
+  
   boxClass <- "box"
   if (solidHeader || !is.null(background)) {
     boxClass <- paste(boxClass, "box-solid")
@@ -500,6 +546,13 @@ boxPlus <- function(..., title = NULL, footer = NULL, status = NULL, solidHeader
   if (!is.null(background)) {
     validateColor(background)
     boxClass <- paste0(boxClass, " bg-", background)
+  }
+  if (enable_sidebar) {
+    if (sidebar_start_open) {
+      boxClass <- paste0(boxClass, " direct-chat direct-chat-contacts-open")
+    } else {
+      boxClass <- paste0(boxClass, " direct-chat")
+    }
   }
   style <- NULL
   if (!is.null(height)) {
@@ -557,19 +610,103 @@ boxPlus <- function(..., title = NULL, footer = NULL, status = NULL, solidHeader
     )
   }
   
+  sidebarTag <- NULL
+  if (enable_sidebar) {
+    sidebarTag <- shiny::tags$button(
+      class = "btn btn-box-tool",
+      `data-widget` = "chat-pane-toggle",
+      `data-toggle` = "tooltip",
+      `data-original-title` = "More",
+      title = NA,
+      type = "button",
+      shiny::icon("info")
+    )
+  }
+  
   
   # update boxToolTag
-  boxToolTag <- shiny::tagAppendChildren(boxToolTag, labelTag, dropdownTag, collapseTag, closableTag)
+  boxToolTag <- shiny::tagAppendChildren(
+    boxToolTag, 
+    labelTag, 
+    dropdownTag, 
+    sidebarTag, 
+    collapseTag, 
+    closableTag
+  )
   
   headerTag <- NULL
   if (!is.null(titleTag) || !is.null(collapseTag)) {
     # replace by boxToolTag
     headerTag <- shiny::tags$div(class = "box-header", titleTag, boxToolTag)
   }
-  shiny::tags$div(class = if (!is.null(width)) 
-    paste0("col-sm-", width), shiny::tags$div(class = boxClass, style = if (!is.null(style)) 
-      style, headerTag, shiny::tags$div(class = "box-body", ...), if (!is.null(footer)) 
-        shiny::tags$div(class = if (isTRUE(footer_padding)) "box-footer" else "box-footer no-padding", footer)))
+  
+  boxPlusTag <- shiny::tags$div(
+    class = if (!is.null(width)) paste0("col-sm-", width), 
+    shiny::tags$div(
+      class = boxClass, 
+      style = if (!is.null(style)) style, 
+      headerTag, 
+      shiny::tags$div(
+        class = "box-body", 
+        ...,
+        if (enable_sidebar) {
+          shiny::tags$div(
+            style = "z-index: 10000;",
+            class = "direct-chat-contacts",
+            shiny::tags$ul(
+              class = "contacts-list", 
+              shiny::tags$li(
+                style = paste0("width: ", sidebar_width, "%;"), 
+                sidebar_content
+              )
+            )
+          )
+        }
+      ), 
+      if (!is.null(footer)) shiny::tags$div(
+        class = if (isTRUE(footer_padding)) "box-footer" else "box-footer no-padding", footer)
+    )
+  )
+  
+  translation_rate <- paste0(100 - sidebar_width, "%")
+  
+  shiny::tagList(
+    shiny::singleton(
+      shiny::tags$head(
+        shiny::tags$style(
+          shiny::HTML(
+            # the first CSS class will be useful maybe for
+            # later release but is useless right now
+            paste0(
+              ".direct-chat-contacts {
+                 -webkit-transform: translate(100%, 0);
+                 -ms-transform: translate(100%, 0);
+                 -o-transform: translate(100%, 0);
+                 transform: translate(100%, 0);
+                 position: absolute;
+                 top: 0;
+                 bottom: 0;
+                 height: 100%;
+                 width: 100%;
+                 background: ", sidebar_background, ";
+                 color: #fff;
+                 overflow: auto;
+              }
+              .direct-chat-contacts-open .direct-chat-contacts {
+                -webkit-transform: translate(", translation_rate, ", 0);
+                -ms-transform: translate(", translation_rate, ", 0);
+                -o-transform: translate(", translation_rate, ", 0);
+                transform: translate(", translation_rate, ", 0);
+              }
+              "
+            )
+          )
+        )
+      )
+    ),
+    boxPlusTag
+  )
+  
 }
 
 
@@ -656,18 +793,14 @@ dropdownDivider <- function() {
 #'        "This is the content"
 #'       ),
 #'       comments = tagList(
-#'        boxComment(
-#'         src = "https://adminlte.io/themes/AdminLTE/dist/img/user3-128x128.jpg",
-#'         title = "Comment 1",
-#'         date = "01.05.2018",
-#'         "The first comment"
-#'        ),
-#'        boxComment(
-#'         src = "https://adminlte.io/themes/AdminLTE/dist/img/user5-128x128.jpg",
-#'         title = "Comment 2",
-#'         date = "01.05.2018",
-#'         "The second comment"
-#'        )
+#'        lapply(X = 1:10, FUN = function(i) {
+#'         boxComment(
+#'           src = "https://adminlte.io/themes/AdminLTE/dist/img/user3-128x128.jpg",
+#'           title = paste("Comment", i),
+#'           date = "01.05.2018",
+#'           paste0("The ", i, "-th comment")
+#'         )
+#'        })
 #'       ),
 #'       footer = "The footer here!"
 #'      )
@@ -739,16 +872,21 @@ socialBox <- function(..., src = NULL, title = NULL, subtitle = NULL,
       ),
       
       # box comments
-      shiny::tags$div(
-        class = "box-footer box-comments",
-        comments
-      ),
+      if (!is.null(comments)) {
+        shiny::tags$div(
+          class = "box-footer box-comments",
+          style = "overflow-y: auto; max-height: 150px;",
+          comments
+        ) 
+      },
       
       # footer
-      shiny::tags$div(
-        class = if (isTRUE(footer_padding)) "box-footer" else "box-footer no-padding", 
-        footer
-      )
+      if (!is.null(footer)) {
+        shiny::tags$div(
+          class = if (isTRUE(footer_padding)) "box-footer" else "box-footer no-padding", 
+          footer
+        ) 
+      }
     )
   )
 }
@@ -879,5 +1017,372 @@ boxProfileItem <- function(title = NULL, description = NULL) {
     class = "list-group-item",
     shiny::strong(title),
     shiny::a(class = "pull-right", description)
+  )
+}
+
+
+
+#' @title AdminLTE2 flipping box
+#'
+#' @description Create a flipping box
+#'
+#' @param ... front body content.
+#' @param back_content back body content.
+#' @param id Box id. Must be unique!
+#' @param front_title Box front title.
+#' @param back_title Box back title.
+#' @param front_btn_text Front button text.
+#' @param back_btn_text Back button text.
+#' @param header_img Header background image url or path.
+#' @param main_img Main image url or path (for instance profile image).
+#' 
+#' @param width box width (between 1 and 12). 6 by default.
+#'
+#' @author David Granjon, \email{dgranjon@@ymail.com}
+#'
+#' @examples
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinydashboard)
+#'  library(shinydashboardPlus)
+#'  shinyApp(
+#'    ui = dashboardPage(
+#'      dashboardHeader(),
+#'      dashboardSidebar(),
+#'      dashboardBody(
+#'        setShadow("card"),
+#'        fluidRow(
+#'          column(
+#'            width = 6,
+#'            align = "center",
+#'            flipBox(
+#'              id = 1,
+#'              main_img = "https://image.flaticon.com/icons/svg/149/149076.svg",
+#'              header_img = "https://image.flaticon.com/icons/svg/119/119595.svg",
+#'              front_title = "John Doe",
+#'              back_title = "About John",
+#'              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
+#'              sed do eiusmod tempor incididunt ut labore et dolore magna 
+#'              aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
+#'              ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+#'              Duis aute irure dolor in reprehenderit in voluptate velit 
+#'              esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
+#'              occaecat cupidatat non proident, sunt in culpa qui officia 
+#'              deserunt mollit anim id est laborum",
+#'              fluidRow(
+#'                dashboardLabel("Label 1", status = "info"),
+#'                dashboardLabel("Label 2", status = "success"),
+#'                dashboardLabel("Label 3", status = "warning"),
+#'                dashboardLabel("Label 4", status = "primary"),
+#'                dashboardLabel("Label 5", status = "danger")
+#'              ),
+#'              hr(),
+#'              fluidRow(
+#'                column(
+#'                  width = 6,
+#'                  align = "center",
+#'                  starBlock(grade = 5),
+#'                  starBlock(grade = 5, color = "olive"),
+#'                  starBlock(grade = 1, color = "maroon"),
+#'                  starBlock(grade = 3, color = "teal")
+#'                ),
+#'                column(
+#'                  width = 6,
+#'                  align = "center",
+#'                  appButton(
+#'                    url = "http://google.com",
+#'                    label = "Users",
+#'                    icon = "fa fa-users",
+#'                    enable_badge = TRUE,
+#'                    badgeColor = "purple",
+#'                    badgeLabel = 891
+#'                  ),
+#'                  appButton(
+#'                    label = "Edit",
+#'                    icon = "fa fa-edit",
+#'                    enable_badge = FALSE,
+#'                    badgeColor = NULL,
+#'                    badgeLabel = NULL
+#'                  )
+#'                )
+#'              ),
+#'              back_content = tagList(
+#'                column(
+#'                  width = 12,
+#'                  align = "center",
+#'                  sliderInput(
+#'                    "obs", 
+#'                    "Number of observations:",
+#'                    min = 0, 
+#'                    max = 1000, 
+#'                    value = 500
+#'                  )
+#'                ),
+#'                plotOutput("distPlot")
+#'              )
+#'            )
+#'        ),
+#'        column(
+#'          width = 6,
+#'          align = "center",
+#'          flipBox(
+#'            id = 2,
+#'            main_img = "https://image.flaticon.com/icons/svg/149/149073.svg",
+#'            header_img = "https://image.flaticon.com/icons/svg/119/119598.svg",
+#'            front_title = "Johanna Doe",
+#'            back_title = "About Johanna",
+#'            fluidRow(
+#'              column(
+#'                width = 6,
+#'                align = "center",
+#'                boxPad(
+#'                  color = "green",
+#'                  descriptionBlock(
+#'                    header = "8390",
+#'                    text = "VISITS",
+#'                    right_border = FALSE,
+#'                    margin_bottom = TRUE
+#'                  ),
+#'                  descriptionBlock(
+#'                    header = "30%",
+#'                    text = "REFERRALS",
+#'                    right_border = FALSE,
+#'                    margin_bottom = TRUE
+#'                  ),
+#'                  descriptionBlock(
+#'                    header = "70%",
+#'                    text = "ORGANIC",
+#'                    right_border = FALSE,
+#'                    margin_bottom = FALSE
+#'                  )
+#'                )
+#'              ),
+#'              column(
+#'                width = 6,
+#'                align = "center",
+#'                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
+#'                sed do eiusmod tempor.",
+#'                br(),
+#'                verticalProgress(
+#'                  value = 10,
+#'                  striped = TRUE,
+#'                  active = TRUE
+#'                ),
+#'                verticalProgress(
+#'                  value = 50,
+#'                  active = TRUE,
+#'                  status = "warning",
+#'                  size = "xs"
+#'                ),
+#'                verticalProgress(
+#'                  value = 20,
+#'                  status = "danger",
+#'                  size = "sm",
+#'                  height = "60%"
+#'                )
+#'              )
+#'            ),
+#'            back_content = tagList(
+#'              column(
+#'                width = 12,
+#'                align = "center",
+#'                radioButtons(
+#'                  "dist", 
+#'                  "Distribution type:",
+#'                  c("Normal" = "norm",
+#'                    "Uniform" = "unif",
+#'                    "Log-normal" = "lnorm",
+#'                    "Exponential" = "exp"
+#'                  )
+#'                )
+#'              ),
+#'              plotOutput("plot")
+#'            )
+#'        )
+#'        )
+#'      )
+#'    ),
+#'    title = "flipBox"
+#'    ),
+#'    server = function(input, output) {
+#'      output$distPlot <- renderPlot({
+#'        hist(rnorm(input$obs))
+#'      })
+#'      output$plot <- renderPlot({
+#'        dist <- switch(input$dist,
+#'                       norm = rnorm,
+#'                       unif = runif,
+#'                       lnorm = rlnorm,
+#'                       exp = rexp,
+#'                       rnorm)
+#'        
+#'        hist(dist(500))
+#'      })
+#'    }
+#'   )
+#' }
+#'
+#' @export
+flipBox <- function(..., back_content, id, front_title = NULL, back_title = NULL, 
+                    front_btn_text = "More", back_btn_text = "Back to main", 
+                    header_img = NULL, main_img = NULL, width = 6) {
+  
+  # this is to make sure that each id is unique
+  # this is not a very nice approach since it does not
+  # garanty uniquness of id in theory. In practice, it is
+  # very unlikely that user create 10000 boxes in a dashboard
+  id_front <- id
+  id_back <- id_front + 10000
+  if (is.null(id)) stop("card id cannot be null and must be unique")
+  
+  flipBoxTag <- shiny::tags$div(
+    class = paste0("col sm-", width),
+    shiny::tags$div(
+      class = "rotate-container",
+      # Front
+      shiny::tags$div(
+        class = paste0("card card-front-", id , " text-center"),
+        style = "background-color: #ffffff;",
+        # background
+        shiny::tags$div(class = paste0("card-background-", id)),
+        shiny::tags$div(
+          class = "card-block",
+          shiny::tags$img(
+            class = "avatar",
+            src = main_img,
+            alt = "Avatar"
+          ),
+          shiny::tags$h3(class = "card-title", front_title),
+          shiny::tags$p(...),
+          shiny::tags$button(
+            id = paste0("btn-", id_front),
+            class = "btn btn-primary btn-rotate",
+            shiny::tags$i(class = "fa fa-long-arrow-right"), 
+            front_btn_text      
+          )
+        )
+      ),
+      # back
+      shiny::tags$div(
+        class = paste0("card card-back-", id , " text-center"),
+        style = "background-color: #ffffff;",
+        shiny::br(),
+        shiny::tags$div(
+          class = "card-header",
+          shiny::tags$p(
+            shiny::tags$button(
+              id = paste0("btn-", id_back),
+              class = "btn btn-primary btn-rotate",
+              shiny::tags$i(class = "fa fa-long-arrow-left"), 
+              back_btn_text      
+            ),
+            shiny::h4(back_title)
+          )
+        ),
+        shiny::hr(),
+        shiny::tags$div(
+          class = "card-block",
+          shiny::tags$p(back_content)
+        )
+      )
+    )
+  )
+  
+  shiny::tagList(
+    shiny::singleton(
+      shiny::tags$head(
+        # CSS
+        shiny::tags$style(
+          shiny::HTML(
+            paste0(
+              "/* Card styles for rotation */
+              .rotate-container {
+                position: relative;
+               }
+               .rotate-container .card-front-", id, ", .rotate-container .card-back-", id," {
+                width: 100%;
+                height: 100%;
+                -webkit-transform: perspective(600px) rotateY(0deg);
+                transform: perspective(600px) rotateY(0deg);
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+                transition: all 0.5s linear 0s;
+               }
+               .rotate-container .card-back-", id, " {
+                -webkit-transform: perspective(1600px) rotateY(180deg);
+                transform: perspective(1600px) rotateY(180deg);
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+               }
+               .rotate-container .rotate-card-front-", id, " {
+                -webkit-transform: perspective(1600px) rotateY(-180deg);
+                transform: perspective(1600px) rotateY(-180deg);
+               }
+               .rotate-container .rotate-card-back-", id, " {
+                -webkit-transform: perspective(1600px) rotateY(0deg);
+                transform: perspective(1600px) rotateY(0deg);
+               }
+               
+               /* Modified card styles */
+               .card {
+                box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.5);
+               }
+               .card .card-header p {
+                margin: 0;
+               }
+               
+               .card .card-background-", id, " {
+                background: url('", header_img, "');
+                height: 8em;
+                background-position: center center;
+                background-size: cover;
+               }
+               .card .avatar {
+                max-width: 6em;
+                max-height: 6em;
+                margin-top: -4em;
+                margin-bottom: 1em;
+                border: 4px solid white;
+                border-radius: 50%;
+                background: radial-gradient(#e3e3e3, #329A7C, #109381);
+               }
+               .card .btn {
+                margin-bottom: 1em;
+                cursor: pointer;
+               }
+               .card .social-links li {
+                margin: 0.5em;
+               }
+               .card .social-links a {
+                font-size: 1.5em;
+               }
+               " 
+            )
+          )
+        ),
+        # Javascript
+        shiny::tags$script(
+          shiny::HTML(
+            paste0(
+              "$(function() {
+                // For card rotation
+                $('#btn-", id_front,"').click(function(){
+                  $('.card-front-", id,"').addClass(' rotate-card-front-", id, "');
+                  $('.card-back-", id,"').addClass(' rotate-card-back-", id, "');
+                });
+                $('#btn-", id_back,"').click(function(){
+                  $('.card-front-", id,"').removeClass(' rotate-card-front-", id, "');
+                  $('.card-back-", id,"').removeClass(' rotate-card-back-", id, "');
+                });
+              });
+              "
+            )
+          )
+        )
+      )
+    ),
+    flipBoxTag
   )
 }

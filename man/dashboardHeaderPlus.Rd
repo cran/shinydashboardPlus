@@ -4,8 +4,10 @@
 \alias{dashboardHeaderPlus}
 \title{Create a header for a dashboard page}
 \usage{
-dashboardHeaderPlus(..., title = NULL, titleWidth = NULL, disable = FALSE,
-  .list = NULL, enable_rightsidebar = FALSE, rightSidebarIcon = "gears")
+dashboardHeaderPlus(..., title = NULL, titleWidth = NULL,
+  disable = FALSE, .list = NULL, left_menu = NULL,
+  enable_rightsidebar = FALSE, rightSidebarIcon = "gears",
+  fixed = FALSE)
 }
 \arguments{
 \item{...}{Items to put in the header. Should be \code{\link[shinydashboard]{dropdownMenu}}s.}
@@ -25,82 +27,92 @@ in CSS units.}
 the \code{...} arguments, but in list format. This can be useful when
 working with programmatically generated items.}
 
+\item{left_menu}{Items that will appear on the left part of the navbar. Should
+be wrapped in a tagList.}
+
 \item{enable_rightsidebar}{Whether to enable the right sidebar. FALSE by default.}
 
 \item{rightSidebarIcon}{Customize the trigger icon of the right sidebar.}
+
+\item{fixed}{Whether the navbar is fixed-top or not. FALSE by default.}
 }
 \description{
 A dashboard header can be left blank, or it can include dropdown menu items
 on the right side.
 }
+\note{
+We do not recommend to insert shiny input elements (such as sliderInput) 
+in the left menu, since they will not be well displayed. Instead, wrap them in a 
+ \code{\link[shinydashboardPlus]{dropdownBlock}}
+}
 \examples{
 if (interactive()) {
-library(shiny)
-library(shinydashboard)
-library(shinydashboardPlus)
-
-# A dashboard header with 3 dropdown menus
-header <- dashboardHeader(
-  title = "Dashboard Demo",
-
-  # Dropdown menu for messages
-  dropdownMenu(type = "messages", badgeStatus = "success",
-    messageItem("Support Team",
-      "This is the content of a message.",
-      time = "5 mins"
-    ),
-    messageItem("Support Team",
-      "This is the content of another message.",
-      time = "2 hours"
-    ),
-    messageItem("New User",
-      "Can I get some help?",
-      time = "Today"
-    )
-  ),
-
-  # Dropdown menu for notifications
-  dropdownMenu(type = "notifications", badgeStatus = "warning",
-    notificationItem(icon = icon("users"), status = "info",
-      "5 new members joined today"
-    ),
-    notificationItem(icon = icon("warning"), status = "danger",
-      "Resource usage near limit."
-    ),
-    notificationItem(icon = icon("shopping-cart", lib = "glyphicon"),
-      status = "success", "25 sales made"
-    ),
-    notificationItem(icon = icon("user", lib = "glyphicon"),
-      status = "danger", "You changed your username"
-    )
-  ),
-
-  # Dropdown menu for tasks, with progress bar
-  dropdownMenu(type = "tasks", badgeStatus = "danger",
-    taskItem(value = 20, color = "aqua",
-      "Refactor code"
-    ),
-    taskItem(value = 40, color = "green",
-      "Design new layout"
-    ),
-    taskItem(value = 60, color = "yellow",
-      "Another task"
-    ),
-    taskItem(value = 80, color = "red",
-      "Write documentation"
-    )
-  )
-)
-
-shinyApp(
+ library(shiny)
+ library(shinyWidgets)
+ library(shinydashboard)
+ library(shinydashboardPlus)
+ 
+ shinyApp(
   ui = dashboardPagePlus(
-    dashboardHeaderPlus(),
-    dashboardSidebar(),
-    rightSidebar(),
-    dashboardBody()
+    header = dashboardHeaderPlus(
+      enable_rightsidebar = TRUE,
+      rightSidebarIcon = "gears",
+      left_menu = tagList(
+        dropdownBlock(
+          id = "mydropdown",
+          title = "Dropdown 1",
+          icon = "sliders",
+          sliderInput(
+            inputId = "n",
+            label = "Number of observations",
+            min = 10, max = 100, value = 30
+          ),
+          prettyToggle(
+            inputId = "na",
+            label_on = "NAs keeped",
+            label_off = "NAs removed",
+            icon_on = icon("check"),
+            icon_off = icon("remove")
+          )
+        ),
+        dropdownBlock(
+          id = "mydropdown2",
+          title = "Dropdown 2",
+          icon = "sliders",
+          prettySwitch(
+            inputId = "switch4",
+            label = "Fill switch with status:",
+            fill = TRUE, 
+            status = "primary"
+          ),
+          prettyCheckboxGroup(
+            inputId = "checkgroup2",
+            label = "Click me!", 
+            thick = TRUE,
+            choices = c("Click me !", "Me !", "Or me !"),
+            animation = "pulse", 
+            status = "info"
+          )
+        )
+      ),
+      dropdownMenu(
+        type = "tasks", 
+        badgeStatus = "danger",
+        taskItem(value = 20, color = "aqua", "Refactor code"),
+        taskItem(value = 40, color = "green", "Design new layout"),
+        taskItem(value = 60, color = "yellow", "Another task"),
+        taskItem(value = 80, color = "red", "Write documentation")
+      )
+    ),
+    sidebar = dashboardSidebar(),
+    body = dashboardBody(
+      setShadow(class = "dropdown-menu")
+    ),
+    rightsidebar = rightSidebar(),
+    title = "DashboardPage"
   ),
   server = function(input, output) { }
-)
+ )
 }
 }
 \seealso{
