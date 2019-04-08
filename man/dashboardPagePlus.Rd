@@ -5,11 +5,12 @@
 \title{Dashboard Page with a right sidebar}
 \usage{
 dashboardPagePlus(header, sidebar, body, rightsidebar = NULL,
-  title = NULL, skin = c("blue", "blue-light", "black", "black-light",
-  "purple", "purple-light", "green", "green-light", "red", "red-light",
-  "yellow", "yellow-light"), collapse_sidebar = FALSE,
-  sidebar_background = NULL, enable_preloader = FALSE,
-  loading_duration = 2)
+  footer = NULL, title = NULL, skin = c("blue", "blue-light",
+  "black", "black-light", "purple", "purple-light", "green", "green-light",
+  "red", "red-light", "yellow", "yellow-light"),
+  collapse_sidebar = FALSE, sidebar_background = NULL,
+  sidebar_fullCollapse = FALSE, enable_preloader = FALSE,
+  loading_duration = 2, md = FALSE)
 }
 \arguments{
 \item{header}{A header created by \code{dashboardHeaderPlus}.}
@@ -20,6 +21,8 @@ dashboardPagePlus(header, sidebar, body, rightsidebar = NULL,
 
 \item{rightsidebar}{A right sidebar created by \code{rightSidebar}. NULL by
 default.}
+
+\item{footer}{A footer created by \code{dashboardFooter}.}
 
 \item{title}{A title to display in the browser's title bar. If no value is
 provided, it will try to extract the title from the
@@ -34,9 +37,14 @@ default.}
 \item{sidebar_background}{Main sidebar background color: either "light" or
 NULL. NULL by default.}
 
+\item{sidebar_fullCollapse}{Whether to fully collapse the sidebar as with shinydashboard.
+FALSE by default.}
+
 \item{enable_preloader}{Whether to enable a page loader. FALSE by default.}
 
 \item{loading_duration}{Loader duration in seconds. 2s by default.}
+
+\item{md}{Whether to enable material design. Experimental...}
 }
 \description{
 This creates a dashboard page for use in a Shiny app.

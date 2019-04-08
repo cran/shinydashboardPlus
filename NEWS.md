@@ -1,3 +1,32 @@
+# shinydashboardPlus 0.7.0
+## Breaking Changes
+- remove all CSS functions, namely `setShadow()`, `setPulse()`, `setShake()` and
+`setZoom()`, since they are contained in [shinyEffects](https://github.com/RinteRface/shinyEffects)
+
+## New features
+- 6 new color statuses for `boxPlus()` headers: navy, teal, orange, maroon, black and purple 
+- add new argument .items to `rightSidebar()`: useful if we do not want to 
+embed elements in tabs. 
+- add `dashboardFooter()`
+- add `dashboardUser()`, `dashboardUserItem()`, `renderUser()` and `userOutput()`
+- add `carousel()` and `carouselItem()`
+- new argument to dashboardPagePlus: sidebar_fullCollapse enable the
+sidebar to be fully collapsed as in shinydashboard. Fix #24, thanks @serkserk
+- by default, opening the right sidebar shifts the body content to the left,
+similarly as the left sidebar
+
+## major changes
+- shindashboardPlus is now moved on [RinteRface](https://github.com/RinteRface/shinydashboardPlus)
+
+## Minor changes
+- new hex icons
+- update gallery
+- update vignettes (RinteRface)
+
+## Fixes
+- fix issue when the `dashboardHeaderPlus()` title was NULL
+- fix #22 thanks to @trallard (missing licence)
+
 # shinydashboardPlus 0.6.0
 ## New features
 - add new `flipBox()`
@@ -43,13 +72,13 @@ or redirect at the top of the page
 ## Breaking changes
 - change argument name in `dropdownItem()` (`boxPlus()`): "target" is replaced by "url".
 - Widely simplify the `rightSidebar()` function: remove `rightSidebarTabList()`, `rightSidebarTabItem()` and
-`rightSidebarPanel()` from the user interface. See [here](https://divadnojnarg.github.io/shinydashboardPlus/articles/rightSidebar.html) to discover how to set up 
+`rightSidebarPanel()` from the user interface. See [here](https://rinterface.github.io/shinydashboardPlus/articles/rightSidebar.html) to discover how to set up 
 a new `rightSidebar()`
 ## Major changes
 - add a "width" argument to the `rightSidebar()` (set to 230 pixels by default) to 
 improve customization. 
 - new function `setShadow()` to set shadow and hover effects on any elements
-- add an "active" argument to `rightSidebarTabContent()`: see [#4](https://github.com/DivadNojnarg/shinydashboardPlus/issues/4)
+- add an "active" argument to `rightSidebarTabContent()`: see [#4](https://github.com/RinteRface/shinydashboardPlus/issues/4)
 - add a "sidebar_background" argument to `dashboardPagePlus()`
 - new `verticalProgress()` bars!
 - new functions in the `rightSidebar()`: `rightSidebarMenu()`, `rightSidebarMenuItem()`, `menuIcon()`
