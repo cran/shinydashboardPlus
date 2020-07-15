@@ -4,10 +4,17 @@
 \alias{dashboardHeaderPlus}
 \title{Create a header for a dashboard page}
 \usage{
-dashboardHeaderPlus(..., title = NULL, titleWidth = NULL,
-  disable = FALSE, .list = NULL, left_menu = NULL,
-  enable_rightsidebar = FALSE, rightSidebarIcon = "gears",
-  fixed = FALSE)
+dashboardHeaderPlus(
+  ...,
+  title = NULL,
+  titleWidth = NULL,
+  disable = FALSE,
+  .list = NULL,
+  left_menu = NULL,
+  enable_rightsidebar = FALSE,
+  rightSidebarIcon = "gears",
+  fixed = FALSE
+)
 }
 \arguments{
 \item{...}{Items to put in the header. Should be \code{\link[shinydashboard]{dropdownMenu}}s.}
@@ -69,7 +76,7 @@ if (interactive()) {
           ),
           prettyToggle(
             inputId = "na",
-            label_on = "NAs keeped",
+            label_on = "NAs kept",
             label_off = "NAs removed",
             icon_on = icon("check"),
             icon_off = icon("remove")

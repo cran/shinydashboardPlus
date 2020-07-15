@@ -3,6 +3,7 @@
 #' @description Create an accordion container
 #'
 #' @param ... slot for accordionItem.
+#' @param inputId Unique accordion id.
 #'
 #' @author David Granjon, \email{dgranjon@@ymail.com}
 #'
@@ -15,32 +16,36 @@
 #'     dashboardHeader(),
 #'     dashboardSidebar(),
 #'     dashboardBody(
-#'      box(
-#'       title = "Accordion Demo",
 #'       accordion(
+#'        inputId = "accordion1",
 #'         accordionItem(
-#'           id = 1,
-#'           title = "Accordion Item 1",
+#'           title = "Accordion 1 Item 1",
 #'           color = "danger",
 #'           collapsed = TRUE,
 #'           "This is some text!"
 #'         ),
 #'         accordionItem(
-#'           id = 2,
-#'           title = "Accordion Item 2",
+#'           title = "Accordion 1 Item 2",
 #'           color = "warning",
 #'           collapsed = FALSE,
 #'           "This is some text!"
+#'         )
+#'       ),
+#'       accordion(
+#'        inputId = "accordion2",
+#'         accordionItem(
+#'           title = "Accordion 2 Item 1",
+#'           color = "danger",
+#'           collapsed = TRUE,
+#'           "This is some text!"
 #'         ),
 #'         accordionItem(
-#'           id = 3,
-#'           title = "Accordion Item 3",
-#'           color = "info",
+#'           title = "Accordion 2 Item 2",
+#'           color = "warning",
 #'           collapsed = FALSE,
 #'           "This is some text!"
 #'         )
 #'       )
-#'      )
 #'     ),
 #'     title = "Accordion"
 #'   ),
@@ -49,12 +54,26 @@
 #' }
 #'
 #' @export
-accordion <- function(...) {
+accordion <- function(..., inputId = NULL) {
+  
+  items <- list(...)
+  len <- length(items)
+  
+  # patch that enables a proper accordion behavior
+  # we add the data-parent non standard attribute to each
+  # item. Each accordion must have a unique id.
+  lapply(seq_len(len), FUN = function(i) {
+    items[[i]]$children[[1]]$children[[1]]$children[[1]]$attribs[["data-parent"]] <<- paste0("#", inputId) 
+    items[[i]]$children[[1]]$children[[1]]$children[[1]]$attribs[["href"]] <<- paste0("#collapse_", inputId, "_", i)
+    items[[i]]$children[[2]]$attribs[["id"]] <<- paste0("collapse_", inputId, "_", i)
+  })
+  
   shiny::tags$div(
     class = "box-group",
-    id = "accordion",
-    ...
+    id = inputId,
+    items
   )
+  
 }
 
 
@@ -63,7 +82,6 @@ accordion <- function(...) {
 #' @description Create an accordion item to put inside an accordion container
 #'
 #' @param ... text to write in the item.
-#' @param id unique item id.
 #' @param title item title.
 #' @param color item color: see here for a list of valid colors \url{https://adminlte.io/themes/AdminLTE/pages/UI/general.html}.
 #' @param collapsed Whether to expand or collapse the item. TRUE by default. Set it to FALSE if you want to expand it.
@@ -71,10 +89,8 @@ accordion <- function(...) {
 #' @author David Granjon, \email{dgranjon@@ymail.com}
 #'
 #' @export
-accordionItem <- function(..., id, title = NULL, color = NULL,
+accordionItem <- function(..., title = NULL, color = NULL,
                           collapsed = TRUE) {
-  
-  stopifnot(!is.null(id))
   
   cl <- "panel box"
   if (!is.null(color)) cl <- paste0(cl, " box-", color)
@@ -88,9 +104,9 @@ accordionItem <- function(..., id, title = NULL, color = NULL,
       shiny::tags$h4(
         class = "box-title",
         shiny::tags$a(
-          href = paste0("#collapse", id),
+          href = NULL,
           `data-toggle` = "collapse",
-          `data-parent` = "#accordion",
+          `data-parent` = NULL,
           `aria-expanded` = if (isTRUE(collapsed)) "false" else "true",
           class = if (isTRUE(collapsed)) "collapsed",
           title
@@ -99,7 +115,7 @@ accordionItem <- function(..., id, title = NULL, color = NULL,
     ),
     
     shiny::tags$div(
-      id = paste0("collapse", id), 
+      id = NULL,  
       class = if (isTRUE(collapsed)) {
         "panel-collapse collapse"
       } else {
@@ -109,7 +125,6 @@ accordionItem <- function(..., id, title = NULL, color = NULL,
       style = if (isTRUE(collapsed)) "height: 0px;" else NULL,
       shiny::tags$div(class = "box-body", ...)
     )
-    
   )
 }
 
@@ -122,7 +137,7 @@ accordionItem <- function(..., id, title = NULL, color = NULL,
 #' @param ... any element.
 #' @param src url or path to the image.
 #' @param title attachment title.
-#' @param title_url external link.
+#' @param titleUrl external link.
 #'
 #' @author David Granjon, \email{dgranjon@@ymail.com}
 #'
@@ -138,9 +153,9 @@ accordionItem <- function(..., id, title = NULL, color = NULL,
 #'      box(
 #'       title = "Attachment example",
 #'       attachmentBlock(
-#'        src = "http://kiev.carpediem.cd/data/afisha/o/2d/c7/2dc7670333.jpg",
+#'        src = "https://adminlte.io/themes/AdminLTE/dist/img/photo1.png",
 #'        title = "Test",
-#'        title_url = "http://google.com",
+#'        titleUrl = "https://google.com",
 #'        "This is the content"
 #'       )
 #'      )
@@ -153,7 +168,7 @@ accordionItem <- function(..., id, title = NULL, color = NULL,
 #'
 #' @export
 
-attachmentBlock <- function(..., src = NULL, title = NULL, title_url = NULL) {
+attachmentBlock <- function(..., src = NULL, title = NULL, titleUrl = NULL) {
   shiny::tags$div(
     class = "attachment-block clearfix",
     shiny::img(
@@ -165,7 +180,7 @@ attachmentBlock <- function(..., src = NULL, title = NULL, title_url = NULL) {
       shiny::tags$h4(
         class = "attachment-heading",
         shiny::tags$a(
-          href = title_url,
+          href = titleUrl,
           target = "_blank",
           title
         )
@@ -249,20 +264,20 @@ blockQuote <- function(..., side = "left") {
 #'             descriptionBlock(
 #'               header = "8390", 
 #'               text = "VISITS", 
-#'               right_border = FALSE,
-#'               margin_bottom = TRUE
+#'               rightBorder = FALSE,
+#'               marginBottom = TRUE
 #'             ),
 #'             descriptionBlock(
 #'               header = "30%", 
 #'               text = "REFERRALS", 
-#'               right_border = FALSE,
-#'               margin_bottom = TRUE
+#'               rightBorder = FALSE,
+#'               marginBottom = TRUE
 #'             ),
 #'             descriptionBlock(
 #'               header = "70%", 
 #'               text = "ORGANIC", 
-#'               right_border = FALSE,
-#'               margin_bottom = FALSE
+#'               rightBorder = FALSE,
+#'               marginBottom = FALSE
 #'             )
 #'           )
 #'         )
@@ -291,14 +306,10 @@ boxPad <- function(..., color = NULL, style = NULL) {
 
 #' @title AdminLTE2 special large button
 #'
-#' @description Create a large button ideal for web applications
+#' @description Create a large button ideal for web applications but identical
+#' to the classic Shiny action button.
 #'
-#' @param url if the button should redirect somewhere.
-#' @param label button label.
-#' @param icon button icon, if any. Should be written like "fa fa-times".
-#' @param enable_badge Whether to display a badge on the top-right corner of the button.
-#' @param badgeColor color of the badge: see here for a list of valid colors \url{https://adminlte.io/themes/AdminLTE/pages/UI/general.html}.
-#' @param badgeLabel text to display in the badge. I personally recommend you to only put numbers.
+#' @inheritParams shiny::actionButton
 #'
 #' @author David Granjon, \email{dgranjon@@ymail.com}
 #'
@@ -315,49 +326,26 @@ boxPad <- function(..., color = NULL, style = NULL) {
 #'       title = "App Buttons",
 #'       status = NULL,
 #'       appButton(
-#'         url = "http://google.com",
+#'         inputId = "myAppButton",
 #'         label = "Users", 
-#'         icon = "fa fa-users", 
-#'         enable_badge = TRUE, 
-#'         badgeColor = "purple", 
-#'         badgeLabel = 891
-#'       ),
-#'       appButton(
-#'         label = "Edit", 
-#'         icon = "fa fa-edit", 
-#'         enable_badge = FALSE, 
-#'         badgeColor = NULL, 
-#'         badgeLabel = NULL
-#'       ),
-#'       appButton(
-#'         label = "Likes", 
-#'         icon = "fa fa-heart-o", 
-#'         enable_badge = TRUE, 
-#'         badgeColor = "red", 
-#'         badgeLabel = 3
+#'         icon = icon("users"), 
+#'         dashboardBadge(textOutput("btnVal"))
 #'       )
 #'      )
 #'     ),
 #'     title = "App buttons"
 #'   ),
-#'   server = function(input, output) { }
+#'   server = function(input, output) {
+#'    output$btnVal <- renderText(input$myAppButton)
+#'   }
 #'  )
 #' }
 #'
 #' @export
-appButton <- function(url = NULL, label = NULL, icon = NULL, enable_badge = FALSE, 
-                      badgeColor = NULL, badgeLabel = NULL) {
-  shiny::tags$a(
-    class = "btn btn-app",
-    if (isTRUE(enable_badge)) {
-      cl <- "badge"
-      if (!is.null(badgeColor)) cl <- paste0(cl, " bg-", badgeColor)
-      shiny::tags$span(class = cl, badgeLabel)
-    },
-    shiny::tags$i(class = icon),
-    label,
-    href = url,
-    target = "_blank"
+appButton <- function(..., inputId, label, icon = NULL, width = NULL) {
+  shiny::tagAppendAttributes(
+    shiny::actionButton(inputId, label, icon, width, ...),
+    class = "btn-app"
   )
 }
 
@@ -385,11 +373,11 @@ appButton <- function(url = NULL, label = NULL, icon = NULL, enable_badge = FALS
 #'       title = "Social Buttons",
 #'       status = NULL,
 #'       socialButton(
-#'         url = "http://dropbox.com",
+#'         url = "https://dropbox.com",
 #'         type = "dropbox"
 #'       ),
 #'       socialButton(
-#'         url = "http://github.com",
+#'         url = "https://github.com",
 #'         type = "github"
 #'       )
 #'      )
@@ -460,18 +448,58 @@ dashboardLabel <- function(..., status = "primary", style = "default") {
 
 
 
+#' @title AdminLTE2 badge
+#'
+#' @description Create a badge.
+#'
+#' @param ... Any html text element.
+#' @param color label color.
+#'
+#' @author David Granjon, \email{dgranjon@@ymail.com}
+#'
+#' @examples
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinydashboard)
+#'  shinyApp(
+#'   ui = dashboardPage(
+#'     dashboardHeader(),
+#'     dashboardSidebar(),
+#'     dashboardBody(
+#'      dashboardBadge("Badge 1"),
+#'      actionButton(
+#'       inputId = "badge", 
+#'       label = "Hello", 
+#'       icon = NULL, 
+#'       width = NULL, 
+#'       dashboardBadge(1, color = "orange")
+#'      )
+#'     )
+#'   ),
+#'   server = function(input, output) { }
+#'  )
+#' }
+#'
+#' @export
+dashboardBadge <- function(..., color = "blue") {
+  validateColor(color)
+  shiny::tags$span(class = paste0("badge bg-", color), ...)
+}
+
+
+
 #' @title AdminLTE2 description block
 #'
 #' @description Create a description block, perfect for writing statistics
 #'
 #' @param number any number.
-#' @param number_color number color: see here for a list of valid colors \url{https://adminlte.io/themes/AdminLTE/pages/UI/general.html}.
-#' @param number_icon number icon, if any. Should be written like "fa fa-times".
+#' @param numberColor number color: see here for a list of valid colors \url{https://adminlte.io/themes/AdminLTE/pages/UI/general.html}.
+#' @param numberIcon number icon, if any. Should be written like "fa fa-times".
 #' @param header bold text.
 #' @param text additional text.
-#' @param right_border TRUE by default. Whether to display a right border to
+#' @param rightBorder TRUE by default. Whether to display a right border to
 #'   separate two blocks. The last block on the right should not have a right border.
-#' @param margin_bottom FALSE by default. Set it to TRUE when the
+#' @param marginBottom FALSE by default. Set it to TRUE when the
 #'   descriptionBlock is used in a boxPad context.
 #'
 #' @author David Granjon, \email{dgranjon@@ymail.com}
@@ -496,24 +524,24 @@ dashboardLabel <- function(..., status = "primary", style = "default") {
 #'           width = 6,
 #'           descriptionBlock(
 #'             number = "17%", 
-#'             number_color = "green", 
-#'             number_icon = "fa fa-caret-up",
+#'             numberColor = "green", 
+#'             numberIcon = "caret-up",
 #'             header = "$35,210.43", 
 #'             text = "TOTAL REVENUE", 
-#'             right_border = TRUE,
-#'             margin_bottom = FALSE
+#'             rightBorder = TRUE,
+#'             marginBottom = FALSE
 #'           )
 #'         ),
 #'         column(
 #'           width = 6,
 #'           descriptionBlock(
 #'             number = "18%", 
-#'             number_color = "red", 
-#'             number_icon = "fa fa-caret-down",
+#'             numberColor = "red", 
+#'             numberIcon = "caret-down",
 #'             header = "1200", 
 #'             text = "GOAL COMPLETION", 
-#'             right_border = FALSE,
-#'             margin_bottom = FALSE
+#'             rightBorder = FALSE,
+#'             marginBottom = FALSE
 #'           )
 #'         )
 #'       )
@@ -526,23 +554,23 @@ dashboardLabel <- function(..., status = "primary", style = "default") {
 #' }
 #'
 #' @export
-descriptionBlock <- function(number = NULL, number_color = NULL, number_icon = NULL,
-                             header = NULL, text = NULL, right_border = TRUE,
-                             margin_bottom = FALSE) {
+descriptionBlock <- function(number = NULL, numberColor = NULL, numberIcon = NULL,
+                             header = NULL, text = NULL, rightBorder = TRUE,
+                             marginBottom = FALSE) {
   
   cl <- "description-block"
-  if (isTRUE(right_border)) cl <- paste0(cl, " border-right")
-  if (isTRUE(margin_bottom)) cl <- paste0(cl, " margin-bottom")
+  if (isTRUE(rightBorder)) cl <- paste0(cl, " border-right")
+  if (isTRUE(marginBottom)) cl <- paste0(cl, " margin-bottom")
   
   numcl <- "description-percentage"
-  if (!is.null(number_color)) numcl <- paste0(numcl, " text-", number_color)
+  if (!is.null(numberColor)) numcl <- paste0(numcl, " text-", numberColor)
   
   shiny::tags$div(
     class = cl,
     shiny::tags$span(
       class = numcl, 
       number,
-      if (!is.null(number_icon)) shiny::tags$i(class = number_icon)
+      if (!is.null(numberIcon)) shiny::icon(numberIcon)
     ),
     shiny::tags$h5(class = "description-header", header),
     shiny::tags$span(class = "description-text", text)
@@ -870,16 +898,16 @@ preloader <- function() {
 #'       status = "primary",
 #'       productList(
 #'         productListItem(
-#'           src = "http://www.pngmart.com/files/1/Haier-TV-PNG.png", 
+#'           src = "https://www.pngmart.com/files/1/Haier-TV-PNG.png", 
 #'           productTitle = "Samsung TV", 
 #'           productPrice = "$1800", 
 #'           priceColor = "warning",
 #'           "This is an amazing TV, but I don't like TV!"
 #'         ),
 #'         productListItem(
-#'           src = "http://icon-park.com/imagefiles/imac.png", 
+#'           src = "https://upload.wikimedia.org/wikipedia/commons/7/77/IMac_Pro.svg", 
 #'           productTitle = "Imac 27", 
-#'           productPrice = "$2400", 
+#'           productPrice = "$4999", 
 #'           priceColor = "danger",
 #'           "This is were I spend most of my time!"
 #'         )
@@ -1046,8 +1074,8 @@ starBlock <- function(maxstar = 5, grade, color = "yellow") {
 #'         title = "Item 3",
 #'         icon = "paint-brush",
 #'         color = "maroon",
-#'         timelineItemMedia(src = "http://placehold.it/150x100"),
-#'         timelineItemMedia(src = "http://placehold.it/150x100")
+#'         timelineItemMedia(src = "https://placehold.it/150x100"),
+#'         timelineItemMedia(src = "https://placehold.it/150x100")
 #'        ),
 #'        timelineStart(color = "gray")
 #'       )
@@ -1077,8 +1105,8 @@ starBlock <- function(maxstar = 5, grade, color = "yellow") {
 #'         title = "Item 3",
 #'         icon = "paint-brush",
 #'         color = "maroon",
-#'         timelineItemMedia(src = "http://placehold.it/150x100"),
-#'         timelineItemMedia(src = "http://placehold.it/150x100")
+#'         timelineItemMedia(src = "https://placehold.it/150x100"),
+#'         timelineItemMedia(src = "https://placehold.it/150x100")
 #'        ),
 #'        timelineStart(color = "gray")
 #'       )
@@ -1769,11 +1797,11 @@ verticalProgress <- function(value, min = 0, max = 100, height = "40%", striped 
 #'        id = "mycarousel",
 #'        carouselItem(
 #'         caption = "Item 1",
-#'         tags$img(src = "http://placehold.it/900x500/3c8dbc/ffffff&text=I+Love+Bootstrap")
+#'         tags$img(src = "https://placehold.it/900x500/3c8dbc/ffffff&text=I+Love+Bootstrap")
 #'        ),
 #'        carouselItem(
 #'         caption = "Item 2",
-#'         tags$img(src = "http://placehold.it/900x500/39CCCC/ffffff&text=I+Love+Bootstrap")
+#'         tags$img(src = "https://placehold.it/900x500/39CCCC/ffffff&text=I+Love+Bootstrap")
 #'        )
 #'       )
 #'      ),
@@ -1850,5 +1878,148 @@ carouselItem <- function(..., caption = "") {
     class = "item",
     ...,
     shiny::tags$div(class = "carousel-caption", caption)
+  )
+}
+
+
+
+
+
+#' @title AdminLTE2 user message container
+#'
+#' @description Create a user message container
+#'
+#' @param ... Slot for \link{userMessage}.
+#' @param status Messages status. See here for a list of valid colors 
+#' \url{https://adminlte.io/themes/AdminLTE/pages/UI/general.html}.
+#' @param width Container width: between 1 and 12.
+#' 
+#' @note Better to include in a \link{boxPlus}.
+#'
+#' @author David Granjon, \email{dgranjon@@ymail.com}
+#'
+#' @examples
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinydashboard)
+#'  library(shinydashboardPlus)
+#'  
+#'  shinyApp(
+#'   ui = dashboardPagePlus(
+#'     dashboardHeaderPlus(),
+#'     dashboardSidebar(),
+#'     dashboardBody(
+#'      boxPlus(
+#'       "Box with messages",
+#'       solidheader = TRUE,
+#'       status = "warning",
+#'       userMessages(
+#'        width = 12,
+#'        status = "success",
+#'         userMessage(
+#'          author = "Alexander Pierce",
+#'          date = "20 Jan 2:00 pm",
+#'          src = "https://adminlte.io/themes/AdminLTE/dist/img/user1-128x128.jpg",
+#'          side = NULL,
+#'          "Is this template really for free? That's unbelievable!"
+#'        ),
+#'        userMessage(
+#'          author = "Sarah Bullock",
+#'          date = "23 Jan 2:05 pm",
+#'          src = "https://adminlte.io/themes/AdminLTE/dist/img/user3-128x128.jpg",
+#'          side = "right",
+#'          "You better believe it!"
+#'        )
+#'       )
+#'      ),
+#'      userMessages(
+#'        width = 6,
+#'        status = "danger",
+#'         userMessage(
+#'          author = "Alexander Pierce",
+#'          date = "20 Jan 2:00 pm",
+#'          src = "https://adminlte.io/themes/AdminLTE/dist/img/user1-128x128.jpg",
+#'          side = NULL,
+#'          "Is this template really for free? That's unbelievable!"
+#'        ),
+#'        userMessage(
+#'          author = "Sarah Bullock",
+#'          date = "23 Jan 2:05 pm",
+#'          src = "https://adminlte.io/themes/AdminLTE/dist/img/user3-128x128.jpg",
+#'          side = "right",
+#'          "You better believe it!"
+#'        )
+#'       )
+#'     ),
+#'     title = "user Message"
+#'   ),
+#'   server = function(input, output) { }
+#'  )
+#' }
+#'
+#' @export
+userMessages <- function(..., status, width = 4) {
+  cl <- "direct-chat-messages direct-chat"
+  if (!is.null(status)) cl <- paste0(cl, " direct-chat-", status)
+  msgtag <- shiny::tags$div(class = cl, ...)
+  
+  shiny::tags$div(
+    class = if (!is.null(width)) paste0("col-sm-", width),
+    msgtag
+  )
+  
+}
+
+#' @title AdminLTE2 user message 
+#'
+#' @description Create a user message
+#'
+#' @param ... Message text.
+#' @param author Message author.
+#' @param date Message date.
+#' @param src Message author image path or url.
+#' @param side Side where author is displayed: NULL (left, by default) or "right".
+#'
+#' @author David Granjon, \email{dgranjon@@ymail.com}
+#'
+#' @export
+userMessage <- function(..., author = NULL, date = NULL, 
+                        src = NULL, side = NULL) {
+  
+  messageCl <- "direct-chat-msg"
+  if (!is.null(side)) messageCl <- paste0(messageCl, " right")
+  
+  # message info
+  messageInfo <- shiny::tags$div(
+    class = "direct-chat-info clearfix",
+    shiny::tags$span(
+      class = if (!is.null(side)) {
+        "direct-chat-name float-left"
+      } else {
+        "direct-chat-name float-right"
+      }, 
+      author
+    ),
+    shiny::tags$span(
+      class = if (!is.null(side)) {
+        "direct-chat-timestamp float-right"
+      } else {
+        "direct-chat-timestamp float-left"
+      }, 
+      date
+    )
+  )
+  
+  # message Text
+  messageTxt <- shiny::tags$div(class = "direct-chat-text", ...)
+  
+  # message author image
+  messageImg <- shiny::tags$img(class = "direct-chat-img", src = src)
+  
+  shiny::tags$div(
+    class = messageCl,
+    messageInfo,
+    messageImg, 
+    messageTxt
   )
 }

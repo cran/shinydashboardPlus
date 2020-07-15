@@ -264,6 +264,7 @@ gradientBox <- function(..., title = NULL, icon = NULL, gradientColor = NULL,
 #' @param height box height.
 #' @param boxToolSize size of the toolbox: choose among "xs", "sm", "md", "lg".
 #' @param collapsible If TRUE, display a button in the upper right that allows the user to collapse the box. 
+#' @param collapsed If TRUE, start collapsed. This must be used with \code{collapsible=TRUE}.
 #' @param closable If TRUE, display a button in the upper right that allows the user to close the box.
 #' @param footer_padding TRUE by default: whether the footer has margin or not.
 #'
@@ -320,7 +321,7 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
                           background = FALSE, backgroundUrl = NULL,
                           src = NULL, color = NULL, footer = NULL, footer_padding = TRUE,
                           width = 6, height = NULL, boxToolSize = "sm",
-                          collapsible = TRUE, closable = FALSE) {
+                          collapsible = TRUE, collapsed = FALSE, closable = FALSE) {
   
   cl <- "widget-user-header"
   if (!is.null(color) && background == FALSE) cl <- paste0(cl, " bg-", color)
@@ -328,6 +329,9 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
   
   boxCl <- "box box-widget widget-user"
   if (!is.null(type)) boxCl <- paste0(boxCl, "-", type)
+  if (collapsible && collapsed) {
+    boxCl <- paste(boxCl, "collapsed-box")
+  }
   
   style <- NULL
   if (!is.null(height)) {
@@ -337,6 +341,31 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
   backgroundStyle <- NULL
   if (isTRUE(background)) {
     backgroundStyle <- paste0("background: url('", backgroundUrl, "') center center;")
+  }
+  
+  # collapseTag
+  collapseTag <- NULL
+  if (collapsible) {
+    collapseIcon <- if (collapsed) 
+      "plus"
+    else "minus"
+    collapseTag <- shiny::tags$button(
+      class = paste0("btn btn-box-tool", " bg-", color, " btn-", boxToolSize), 
+      type = "button",
+      `data-widget` = "collapse", 
+      shiny::icon(collapseIcon)
+    )
+  }
+  
+  # closeTag
+  closeTag <- NULL
+  if (closable) {
+    closeTag <- shiny::tags$button(
+      class = paste0("btn btn-box-tool", " bg-", color, " btn-", boxToolSize),
+      `data-widget` = "remove",
+      type = "button",
+      shiny::tags$i(class = "fa fa-times")
+    )
   }
   
   shiny::column(
@@ -353,22 +382,8 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
         # box header buttons
         shiny::tags$div(
           class = "pull-right box-tools",
-          if (collapsible) {
-            shiny::tags$button(
-              class = paste0("btn", " bg-", color, " btn-", boxToolSize),
-              `data-widget` = "collapse",
-              type = "button",
-              shiny::tags$i(class = "fa fa-minus")
-            )
-          },
-          if (closable) {
-            shiny::tags$button(
-              class = paste0("btn", " bg-", color, " btn-", boxToolSize),
-              `data-widget` = "remove",
-              type = "button",
-              shiny::tags$i(class = "fa fa-times")
-            )
-          }
+          collapseTag,
+          closeTag
         ),
         
         # image
@@ -431,9 +446,11 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
 #' @param dropdown_menu List of items in the the boxtool dropdown menu. Use dropdownItemList().
 #' @param enable_sidebar Whether to display the box sidebar. FALSE by default.
 #' @param sidebar_content Box sidebar content, if any.
+#' @param sidebar_title Box sidebar title.
 #' @param sidebar_width Box sidebar width in percentage. 25\% by default. Numeric value between 0 and 100.
 #' @param sidebar_background Box sidebar background color. Dark by default.
 #' @param sidebar_start_open Whether the box sidebar is open at start. FALSE by default.
+#' @param sidebar_icon Box sidebar icon. 
 #' @param footer_padding TRUE by default: whether the footer has margin or not.
 #'
 #' @family boxes
@@ -459,7 +476,7 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
 #'          enable_dropdown = TRUE,
 #'          dropdown_icon = "wrench",
 #'          dropdown_menu = dropdownItemList(
-#'           dropdownItem(url = "http://www.google.com", name = "Link to google"),
+#'           dropdownItem(url = "https://www.google.com", name = "Link to google"),
 #'           dropdownItem(url = "#", name = "item 2"),
 #'           dropdownDivider(),
 #'           dropdownItem(url = "#", name = "item 3")
@@ -498,6 +515,7 @@ widgetUserBox <- function(..., title = NULL, subtitle = NULL, type = NULL,
 #'           collapsible = TRUE,
 #'           enable_sidebar = TRUE,
 #'           sidebar_width = 25,
+#'           side_bar_title = "Title",
 #'           sidebar_start_open = TRUE,
 #'           sidebar_content = sliderInput(
 #'            "obs", 
@@ -524,8 +542,8 @@ boxPlus <- function(..., title = NULL, footer = NULL, status = NULL, solidHeader
                      collapsed = FALSE, closable = TRUE, enable_label = FALSE,
                      label_text = NULL, label_status = "primary", enable_dropdown = FALSE,
                      dropdown_icon = "wrench", dropdown_menu = NULL, enable_sidebar = FALSE,
-                     sidebar_content = NULL, sidebar_width = 25, sidebar_background = "#222d32", 
-                     sidebar_start_open = FALSE, footer_padding = TRUE) 
+                     sidebar_content = NULL, sidebar_title = NA_character_, sidebar_width = 25, sidebar_background = "#222d32", 
+                     sidebar_start_open = FALSE, sidebar_icon = "cogs", footer_padding = TRUE) 
 {
   
   if (sidebar_width < 0 || sidebar_width > 100) 
@@ -616,9 +634,9 @@ boxPlus <- function(..., title = NULL, footer = NULL, status = NULL, solidHeader
       `data-widget` = "chat-pane-toggle",
       `data-toggle` = "tooltip",
       `data-original-title` = "More",
-      title = NA,
+      title = sidebar_title,
       type = "button",
-      shiny::icon("info")
+      shiny::icon(sidebar_icon)
     )
   }
   
@@ -650,7 +668,7 @@ boxPlus <- function(..., title = NULL, footer = NULL, status = NULL, solidHeader
         ...,
         if (enable_sidebar) {
           shiny::tags$div(
-            style = "z-index: 10000;",
+            style = "z-index: 1000;",
             class = "direct-chat-contacts",
             shiny::tags$ul(
               class = "contacts-list", 
@@ -786,9 +804,9 @@ dropdownDivider <- function() {
 #'       src = "https://adminlte.io/themes/AdminLTE/dist/img/user4-128x128.jpg",
 #'       "Some text here!",
 #'       attachmentBlock(
-#'        src = "http://kiev.carpediem.cd/data/afisha/o/2d/c7/2dc7670333.jpg",
+#'        src = "https://adminlte.io/themes/AdminLTE/dist/img/photo1.png",
 #'        title = "Test",
-#'        title_url = "http://google.com",
+#'        title_url = "https://google.com",
 #'        "This is the content"
 #'       ),
 #'       comments = tagList(
@@ -974,7 +992,9 @@ boxComment <- function(..., src = NULL, title = NULL, date = NULL) {
 boxProfile <- function(..., src = NULL, title = NULL, subtitle = NULL) {
   shiny::tags$div(
     class = "box-body, box-profile",
-    shiny::img(class = "profile-user-img img-responsive img-circle", src = src),
+    if (!is.null(src)) {
+      shiny::img(class = "profile-user-img img-responsive img-circle", src = src)
+    },
     shiny::h3(class = "profile-username text-center", title),
     shiny::p(class = "text-muted text-center", subtitle),
     ...
@@ -1089,7 +1109,7 @@ boxProfileItem <- function(title = NULL, description = NULL) {
 #'                  width = 6,
 #'                  align = "center",
 #'                  appButton(
-#'                    url = "http://google.com",
+#'                    url = "https://google.com",
 #'                    label = "Users",
 #'                    icon = "fa fa-users",
 #'                    enable_badge = TRUE,
@@ -1226,12 +1246,6 @@ flipBox <- function(..., back_content, id, front_title = NULL, back_title = NULL
                     front_btn_text = "More", back_btn_text = "Back to main", 
                     header_img = NULL, main_img = NULL, width = 6) {
   
-  # this is to make sure that each id is unique
-  # this is not a very nice approach since it does not
-  # garanty uniquness of id in theory. In practice, it is
-  # very unlikely that user create 10000 boxes in a dashboard
-  id_front <- id
-  id_back <- id_front + 10000
   if (is.null(id)) stop("card id cannot be null and must be unique")
   
   flipBoxTag <- shiny::tags$div(
@@ -1254,7 +1268,7 @@ flipBox <- function(..., back_content, id, front_title = NULL, back_title = NULL
           shiny::tags$h3(class = "card-title", front_title),
           shiny::tags$p(...),
           shiny::tags$button(
-            id = paste0("btn-", id_front),
+            id = paste0("btn-", id, "-front"),
             class = "btn btn-primary btn-rotate",
             shiny::tags$i(class = "fa fa-long-arrow-right"), 
             front_btn_text      
@@ -1270,7 +1284,7 @@ flipBox <- function(..., back_content, id, front_title = NULL, back_title = NULL
           class = "card-header",
           shiny::tags$p(
             shiny::tags$button(
-              id = paste0("btn-", id_back),
+              id = paste0("btn-", id, "-back"),
               class = "btn btn-primary btn-rotate",
               shiny::tags$i(class = "fa fa-long-arrow-left"), 
               back_btn_text      
@@ -1367,11 +1381,11 @@ flipBox <- function(..., back_content, id, front_title = NULL, back_title = NULL
             paste0(
               "$(function() {
                 // For card rotation
-                $('#btn-", id_front,"').click(function(){
+                $('#btn-", id,"-front').click(function(){
                   $('.card-front-", id,"').addClass(' rotate-card-front-", id, "');
                   $('.card-back-", id,"').addClass(' rotate-card-back-", id, "');
                 });
-                $('#btn-", id_back,"').click(function(){
+                $('#btn-", id,"-back').click(function(){
                   $('.card-front-", id,"').removeClass(' rotate-card-front-", id, "');
                   $('.card-back-", id,"').removeClass(' rotate-card-back-", id, "');
                 });

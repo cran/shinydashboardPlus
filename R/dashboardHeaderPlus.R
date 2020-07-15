@@ -53,7 +53,7 @@
 #'           ),
 #'           prettyToggle(
 #'             inputId = "na",
-#'             label_on = "NAs keeped",
+#'             label_on = "NAs kept",
 #'             label_off = "NAs removed",
 #'             icon_on = icon("check"),
 #'             icon_off = icon("remove")
@@ -262,14 +262,14 @@ dashboardHeaderPlus <- function(..., title = NULL, titleWidth = NULL,
 #'         dashboardUserItem(
 #'          width = 6,
 #'          socialButton(
-#'           url = "http://dropbox.com",
+#'           url = "https://dropbox.com",
 #'           type = "dropbox"
 #'          )
 #'         ),
 #'         dashboardUserItem(
 #'          width = 6,
 #'          socialButton(
-#'           url = "http://github.com",
+#'           url = "https://github.com",
 #'           type = "github"
 #'          )
 #'         )

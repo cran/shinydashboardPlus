@@ -4,8 +4,14 @@
 \alias{dashboardUser}
 \title{Create a dashboard user profile.}
 \usage{
-dashboardUser(..., name = NULL, src = NULL, title = NULL,
-  subtitle = NULL, footer = NULL)
+dashboardUser(
+  ...,
+  name = NULL,
+  src = NULL,
+  title = NULL,
+  subtitle = NULL,
+  footer = NULL
+)
 }
 \arguments{
 \item{...}{Body content. Slot for \link{dashboardUserItem}.}
@@ -55,14 +61,14 @@ if (interactive()) {
         dashboardUserItem(
          width = 6,
          socialButton(
-          url = "http://dropbox.com",
+          url = "https://dropbox.com",
           type = "dropbox"
          )
         ),
         dashboardUserItem(
          width = 6,
          socialButton(
-          url = "http://github.com",
+          url = "https://github.com",
           type = "github"
          )
         )

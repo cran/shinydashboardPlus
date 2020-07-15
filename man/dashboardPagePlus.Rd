@@ -4,13 +4,22 @@
 \alias{dashboardPagePlus}
 \title{Dashboard Page with a right sidebar}
 \usage{
-dashboardPagePlus(header, sidebar, body, rightsidebar = NULL,
-  footer = NULL, title = NULL, skin = c("blue", "blue-light",
-  "black", "black-light", "purple", "purple-light", "green", "green-light",
-  "red", "red-light", "yellow", "yellow-light"),
-  collapse_sidebar = FALSE, sidebar_background = NULL,
-  sidebar_fullCollapse = FALSE, enable_preloader = FALSE,
-  loading_duration = 2, md = FALSE)
+dashboardPagePlus(
+  header,
+  sidebar,
+  body,
+  rightsidebar = NULL,
+  footer = NULL,
+  title = NULL,
+  skin = c("blue", "blue-light", "black", "black-light", "purple", "purple-light",
+    "green", "green-light", "red", "red-light", "yellow", "yellow-light", "midnight"),
+  collapse_sidebar = FALSE,
+  sidebar_background = NULL,
+  sidebar_fullCollapse = FALSE,
+  enable_preloader = FALSE,
+  loading_duration = 2,
+  md = FALSE
+)
 }
 \arguments{
 \item{header}{A header created by \code{dashboardHeaderPlus}.}
@@ -28,11 +37,9 @@ default.}
 provided, it will try to extract the title from the
 \code{dashboardHeaderPlus}.}
 
-\item{skin}{A color theme. One of \code{"blue"}, \code{"black"},
-\code{"purple"}, \code{"green"}, \code{"red"}, or \code{"yellow"}.}
+\item{skin}{A color theme. See \url{https://adminlte.io/themes/AdminLTE/pages/UI/general.html}.}
 
-\item{collapse_sidebar}{Whether to collapse the left sidebar. TRUE by
-default.}
+\item{collapse_sidebar}{Whether to collapse the left sidebar. TRUE by default.}
 
 \item{sidebar_background}{Main sidebar background color: either "light" or
 NULL. NULL by default.}

@@ -1,7 +1,7 @@
 Package: shinydashboardPlus
 Type: Package
 Title: Add More 'AdminLTE2' Components to 'shinydashboard'
-Version: 0.7.0
+Version: 0.7.5
 Authors@R: c(
   person("David", "Granjon", email = "dgranjon@ymail.com", role = c("aut", "cre")),
   person(family = "RinteRface", role = "cph"),
@@ -17,17 +17,17 @@ Description: Extend 'shinydashboard' with 'AdminLTE2' components.
              at <https://adminlte.io>. Customize boxes, add timelines and a lot more. 
 License: GPL (>= 2) | file LICENSE
 Imports: shiny, htmltools, shinydashboard
-Suggests: styler (>= 1.0.2), shinyAce, shinyWidgets, shinyEffects,
+Suggests: styler (>= 1.2.0), shinyAce, shinyWidgets, shinyEffects,
         shinyjqui, knitr, rmarkdown
 URL: https://github.com/RinteRface/shinydashboardPlus,
         https://rinterface.com/shiny/shinydashboardPlus/
 BugReports: https://github.com/RinteRface/shinydashboardPlus/issues
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1.9000
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2019-04-08 07:56:58 UTC; macdavidgranjon
+Packaged: 2020-07-15 08:57:08 UTC; granjda1
 Author: David Granjon [aut, cre],
   RinteRface [cph],
   Almasaeed Studio [ctb, cph] (AdminLTE2 theme for Bootstrap 3),
@@ -36,4 +36,4 @@ Author: David Granjon [aut, cre],
   Petr Tichy [ctb, cph] (CSS preloader),
   Victor Perrier [ctb] (improved the shinydashboardPlusGallery)
 Repository: CRAN
-Date/Publication: 2019-04-08 08:20:03 UTC
+Date/Publication: 2020-07-15 09:20:03 UTC

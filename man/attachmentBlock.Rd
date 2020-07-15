@@ -4,7 +4,7 @@
 \alias{attachmentBlock}
 \title{AdminLTE2 attachment container}
 \usage{
-attachmentBlock(..., src = NULL, title = NULL, title_url = NULL)
+attachmentBlock(..., src = NULL, title = NULL, titleUrl = NULL)
 }
 \arguments{
 \item{...}{any element.}
@@ -13,7 +13,7 @@ attachmentBlock(..., src = NULL, title = NULL, title_url = NULL)
 
 \item{title}{attachment title.}
 
-\item{title_url}{external link.}
+\item{titleUrl}{external link.}
 }
 \description{
 Create an attachment container, nice to wrap articles...
@@ -30,9 +30,9 @@ if (interactive()) {
      box(
       title = "Attachment example",
       attachmentBlock(
-       src = "http://kiev.carpediem.cd/data/afisha/o/2d/c7/2dc7670333.jpg",
+       src = "https://adminlte.io/themes/AdminLTE/dist/img/photo1.png",
        title = "Test",
-       title_url = "http://google.com",
+       titleUrl = "https://google.com",
        "This is the content"
       )
      )

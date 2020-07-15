@@ -1,3 +1,37 @@
+# shinydashboardPlus 0.7.5
+
+## Experimental
+- New dark theme: midnight (still work in progress, some elements are missing)
+
+## Breaking Changes
+- `accordion()` id becomes inputId. `accordionItem()` id parameter is removed
+- rework `appButton()` : this is a classic shiny actionButton, with improved styling.
+- change title_url in titleUrl in `attachmentBlock()`
+change number_color, number_icon, margin_bottom and rightBorder to camelcase params
+in `descriptionBlock()`
+- numberIcon in `descriptionBlock()` only need the name of the icon ('times') instead of the full class (like fa fa-times)
+## New features
+- add `userMessages()` and `userMessage()`
+- add `dashboardBadge()`: use in elements like `appButton()`. This is different from 
+`dashboardLabel()`
+
+## Minor Change
+- Fix #52: add collapsed arg to `widgetUserBox()`. Thanks @terpsrule
+- Fix #40: add sidebar_icon argument to `boxPlus()`. Thanks @jmw86069 for the suggestion
+
+## Bug Fixes
+- Fix #61: uniqness of `accordion()` id. Thanks @RegaCaska
+- Fix #23: rework id arg in `flipBox()`. Thanks @vinpogo
+- Add class btn-box-tool to close button in `widgetUserBox()`. 
+Prevent from ugly rendering
+- Fix #51: change card sidebar z-index so that it is not displayed on top of
+ the page preloader. Thanks @leungi
+- Fix #53: missing title in demo message card
+- Fix #55: when no image is provided, no circle is displayed. Thanks @nschwamm
+- Replace http links by https
+- Fix #36: make sure that a `carousel()` item is displayed when it is generated via a shiny Output function. Thanks @daattali for the report
+
+
 # shinydashboardPlus 0.7.0
 ## Breaking Changes
 - remove all CSS functions, namely `setShadow()`, `setPulse()`, `setShake()` and

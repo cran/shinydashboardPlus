@@ -4,15 +4,33 @@
 \alias{boxPlus}
 \title{Create a box for the main body of a dashboard}
 \usage{
-boxPlus(..., title = NULL, footer = NULL, status = NULL,
-  solidHeader = FALSE, background = NULL, width = 6, height = NULL,
-  collapsible = FALSE, collapsed = FALSE, closable = TRUE,
-  enable_label = FALSE, label_text = NULL, label_status = "primary",
-  enable_dropdown = FALSE, dropdown_icon = "wrench",
-  dropdown_menu = NULL, enable_sidebar = FALSE,
-  sidebar_content = NULL, sidebar_width = 25,
-  sidebar_background = "#222d32", sidebar_start_open = FALSE,
-  footer_padding = TRUE)
+boxPlus(
+  ...,
+  title = NULL,
+  footer = NULL,
+  status = NULL,
+  solidHeader = FALSE,
+  background = NULL,
+  width = 6,
+  height = NULL,
+  collapsible = FALSE,
+  collapsed = FALSE,
+  closable = TRUE,
+  enable_label = FALSE,
+  label_text = NULL,
+  label_status = "primary",
+  enable_dropdown = FALSE,
+  dropdown_icon = "wrench",
+  dropdown_menu = NULL,
+  enable_sidebar = FALSE,
+  sidebar_content = NULL,
+  sidebar_title = NA_character_,
+  sidebar_width = 25,
+  sidebar_background = "#222d32",
+  sidebar_start_open = FALSE,
+  sidebar_icon = "cogs",
+  footer_padding = TRUE
+)
 }
 \arguments{
 \item{...}{Contents of the box.}
@@ -63,11 +81,15 @@ the user to collapse the box.}
 
 \item{sidebar_content}{Box sidebar content, if any.}
 
+\item{sidebar_title}{Box sidebar title.}
+
 \item{sidebar_width}{Box sidebar width in percentage. 25\% by default. Numeric value between 0 and 100.}
 
 \item{sidebar_background}{Box sidebar background color. Dark by default.}
 
 \item{sidebar_start_open}{Whether the box sidebar is open at start. FALSE by default.}
+
+\item{sidebar_icon}{Box sidebar icon.}
 
 \item{footer_padding}{TRUE by default: whether the footer has margin or not.}
 }
@@ -95,7 +117,7 @@ if (interactive()) {
          enable_dropdown = TRUE,
          dropdown_icon = "wrench",
          dropdown_menu = dropdownItemList(
-          dropdownItem(url = "http://www.google.com", name = "Link to google"),
+          dropdownItem(url = "https://www.google.com", name = "Link to google"),
           dropdownItem(url = "#", name = "item 2"),
           dropdownDivider(),
           dropdownItem(url = "#", name = "item 3")
@@ -134,6 +156,7 @@ if (interactive()) {
           collapsible = TRUE,
           enable_sidebar = TRUE,
           sidebar_width = 25,
+          side_bar_title = "Title",
           sidebar_start_open = TRUE,
           sidebar_content = sliderInput(
            "obs", 

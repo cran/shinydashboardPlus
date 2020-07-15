@@ -4,9 +4,19 @@
 \alias{socialBox}
 \title{AdminLTE2 social box}
 \usage{
-socialBox(..., src = NULL, title = NULL, subtitle = NULL,
-  width = 6, height = NULL, collapsible = TRUE, closable = TRUE,
-  comments = NULL, footer = NULL, footer_padding = TRUE)
+socialBox(
+  ...,
+  src = NULL,
+  title = NULL,
+  subtitle = NULL,
+  width = 6,
+  height = NULL,
+  collapsible = TRUE,
+  closable = TRUE,
+  comments = NULL,
+  footer = NULL,
+  footer_padding = TRUE
+)
 }
 \arguments{
 \item{...}{body content. May include attachmentBlock for instance.}
@@ -49,9 +59,9 @@ if (interactive()) {
       src = "https://adminlte.io/themes/AdminLTE/dist/img/user4-128x128.jpg",
       "Some text here!",
       attachmentBlock(
-       src = "http://kiev.carpediem.cd/data/afisha/o/2d/c7/2dc7670333.jpg",
+       src = "https://adminlte.io/themes/AdminLTE/dist/img/photo1.png",
        title = "Test",
-       title_url = "http://google.com",
+       title_url = "https://google.com",
        "This is the content"
       ),
       comments = tagList(

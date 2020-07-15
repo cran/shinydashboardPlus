@@ -1,7 +1,7 @@
 source("global.R")
 
 shinyApp(
-  ui = dashboardPagePlus(md = TRUE,
+  ui = dashboardPagePlus(md = FALSE,
     dashboardHeaderPlus(
       fixed = TRUE,
       title = tagList(
@@ -23,7 +23,7 @@ shinyApp(
           ),
           prettyToggle(
             inputId = "na",
-            label_on = "NAs keeped",
+            label_on = "NAs kept",
             label_off = "NAs removed",
             icon_on = icon("check"),
             icon_off = icon("remove")
@@ -183,6 +183,17 @@ shinyApp(
     )
   ),
   server = function(input, output) {
+    
+    # app button
+    output$appBtnVal <- renderText(input$myAppButton)
+    observeEvent(input$myAppButton, {
+      showModal(modalDialog(
+        title = "Important message",
+        "Thanks for clicking on me!"
+      ))
+    })
+    
+    
     output$distPlot <- renderPlot({
       hist(rnorm(input$obs))
     })
@@ -217,24 +228,24 @@ shinyApp(
             width = 6,
             descriptionBlock(
               number = "17%", 
-              number_color = "green", 
-              number_icon = "fa fa-caret-up",
+              numberColor = "green", 
+              numberIcon = "fa fa-caret-up",
               header = "$35,210.43", 
               text = "TOTAL REVENUE", 
-              right_border = TRUE,
-              margin_bottom = FALSE
+              rightBorder = TRUE,
+              marginBottom = FALSE
             )
           ),
           dashboardUserItem(
             width = 6,
             descriptionBlock(
               number = "18%", 
-              number_color = "red", 
-              number_icon = "fa fa-caret-down",
+              numberColor = "red", 
+              numberIcon = "fa fa-caret-down",
               header = "1200", 
               text = "GOAL COMPLETION", 
-              right_border = FALSE,
-              margin_bottom = FALSE
+              rightBorder = FALSE,
+              marginBottom = FALSE
             )
           )
         )
