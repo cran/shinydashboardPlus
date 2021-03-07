@@ -58,7 +58,7 @@ validateStatusPlus <- function(status) {
 #'   \item \code{navy} Dark Grey/Blue
 #'   \item \code{teal} Blue/Green
 #'   \item \code{orange} Orange
-#'   \item \code{purle} Purple
+#'   \item \code{purple} Purple
 #'   \item \code{maroon} Pink
 #'   \item \code{black} Black
 #' }
@@ -70,6 +70,11 @@ validateStatusPlus <- function(status) {
 validStatusesPlus <- c("primary", "success", "info", "warning", "danger", 
                        "navy", "teal", "purple", "orange", "maroon", "black")
 
+
+# all AdminLTE2 skins
+validSkins <- c("blue", "blue-light","black","black-light", 
+                "purple","purple-light", "green","green-light",
+                "red","red-light", "yellow","yellow-light")
 
 # Returns TRUE if a color is a valid color defined in AdminLTE, throws error
 # otherwise.
@@ -111,7 +116,7 @@ validateColor <- function(color) {
 #' @keywords internal
 validColors <- c("red", "yellow", "aqua", "blue", "light-blue", "green",
                  "navy", "teal", "olive", "lime", "orange", "fuchsia",
-                 "purple", "maroon", "black")
+                 "purple", "maroon", "black", "gray")
 
 #' Assert that a tag has specified properties
 #' @param tag A tag object.
@@ -171,4 +176,272 @@ validateTabName <- function(name) {
   if (grepl(".", name, fixed = TRUE)) {
     stop("tabName must not have a '.' in it.")
   }
+}
+
+dropNulls <- function(x) {
+  x[!vapply(x, is.null, FUN.VALUE = logical(1))]
+}
+
+
+# used to generate color tags in the documentation
+rd_color_tag <- function(color, label = color) {
+  style <- sprintf(
+    "width:12px;height:12px;background:%s;border-radius:2px;display:inline-block;margin-right:5px;",
+    color
+  )
+  sprintf(
+    "\\ifelse{html}{\\out{<span style='%s'></span>%s}}{%s}",
+    style, label, label
+  )
+}
+
+
+
+processDeps <- function (tags, session) {
+  ui <- htmltools::takeSingletons(tags, session$singletons, desingleton = FALSE)$ui
+  ui <- htmltools::surroundSingletons(ui)
+  dependencies <- lapply(htmltools::resolveDependencies(htmltools::findDependencies(ui)), 
+                         shiny::createWebDependency)
+  names(dependencies) <- NULL
+  list(html = htmltools::doRenderTags(ui), deps = dependencies)
+}
+
+
+
+validateBoxProps <- function(title, label, sidebar, dropdownMenu, status, gradient, collapsible, 
+                             collapsed, solidHeader, background, width) {
+  
+  if (!is.null(status)) validateStatusPlus(status)
+  if (!is.null(background)) validateColor(background)
+  
+  if (is.null(title) && 
+      (!is.null(label) || !is.null(sidebar) || !is.null(dropdownMenu))) {
+    stop("Cannot use box tools without a title")
+  }
+  
+  if (!collapsible && collapsed) {
+    stop("Cannot collapse a card that is not collapsible.")
+  }
+  
+  if (!is.null(status) && !is.null(background) && !solidHeader) {
+    stop("solidHeader must be TRUE whenever background and status are not NULL at the same time.")
+  }
+  if (gradient && is.null(background)) stop("gradient cannot be used when background is NULL.")
+  
+  if (!is.null(width)) {
+    stopifnot(is.numeric(width))
+    # respect the bootstrap grid
+    stopifnot(width <= 12)
+    stopifnot(width >= 0)
+  }
+}
+
+
+
+setBoxStyle <- function(height, sidebar) {
+  style <- NULL
+  if (!is.null(height)) {
+    style <- paste0("height: ", shiny::validateCssUnit(height))
+  }
+  # add padding if box sidebar
+  if (!is.null(sidebar)) {
+    style <- paste(style, "padding: 10px;")
+  }
+}
+
+
+
+setBoxClass <- function(status, solidHeader, collapsible, collapsed,
+                        gradient, background, sidebar) {
+  
+  boxClass <- "box"
+  if (solidHeader) {
+    boxClass <- paste(boxClass, "box-solid")
+  }
+  
+  if (!is.null(status)) {
+    boxClass <- paste0(boxClass, " box-", status)
+  }
+  
+  if (collapsible && collapsed) {
+    boxClass <- paste(boxClass, "collapsed-box")
+  }
+  
+  if (!is.null(background)) {
+    boxClass <- paste0(boxClass, " bg-", background, if (gradient) "-gradient")
+  }
+  
+  if (!is.null(sidebar)) {
+    sidebarToggle <- sidebar[[1]]
+    startOpen <- sidebarToggle$attribs$`data-start-open`
+    if (startOpen == "true") {
+      boxClass <- paste0(boxClass, " direct-chat direct-chat-contacts-open")
+    } else {
+      boxClass <- paste0(boxClass, " direct-chat")
+    }
+  }
+  
+  boxClass
+}
+
+
+
+# create box icons and return a list of icons
+createBoxTools <- function(collapsible, collapsed, closable, 
+                           sidebar, dropdownMenu, boxToolSize, status, 
+                           background, solidHeader) {
+  
+  btnClass <- paste0(
+    "btn btn-box-tool", 
+    if (!is.null(boxToolSize)) paste0(" btn-", boxToolSize)
+  )
+  
+  if (is.null(status) && !is.null(background)) {
+    btnClass <- paste0(
+      btnClass,
+      if (background %in% validStatusesPlus) {
+        paste0(" bg-", background)
+      }
+    )
+  }
+  
+  # status has always priority compared to background
+  if (!is.null(status) && solidHeader) {
+    btnClass <- paste0(
+      btnClass,
+      if (status %in% validStatuses) {
+        paste0(" btn-", status)
+      }
+    )
+  }
+  
+  collapseTag <- NULL
+  if (collapsible) {
+    collapseIcon <- if (collapsed) 
+      "plus"
+    else "minus"
+    collapseTag <- shiny::tags$button(
+      class = btnClass, 
+      type = "button",
+      `data-widget` = "collapse", 
+      shiny::icon(collapseIcon)
+    )
+  }
+  
+  closableTag <- NULL
+  if (closable) {
+    closableTag <- shiny::tags$button(
+      class = btnClass, 
+      `data-widget` = "remove", 
+      type = "button",
+      shiny::icon("times")
+    )
+  } 
+  
+  sidebarToolTag <- NULL
+  if (!is.null(sidebar)) {
+    sidebar[[1]]$attribs$class <- btnClass
+    sidebarToolTag <- sidebar[[1]]
+  }
+  
+  dropdownMenuToolTag <- NULL
+  if (!is.null(dropdownMenu)) {
+    dropdownMenu$children[[1]]$attribs$class <- paste0(btnClass, " dropdown-toggle")
+    dropdownMenuToolTag <- dropdownMenu
+  }
+  
+  dropNulls(list(dropdownMenuToolTag, collapseTag, closableTag, sidebarToolTag))
+}
+
+
+
+# extract social item in socialBox
+extractSocialItem <- function(items, isComment = TRUE) {
+  
+  if (length(items) > 0) {
+    dropNulls(lapply(items, function(item) {
+      if (inherits(item, "list")) {
+        lapply(item, function(nested) {
+          cond <- if (isComment) {
+            inherits(nested, "box-comment")
+          } else {
+            !inherits(nested, "box-comment")
+          }
+          if (cond) nested
+        })
+      } else {
+        cond <- if (isComment) {
+          inherits(item, "box-comment")
+        } else {
+          !inherits(item, "box-comment")
+        }
+        if (cond) item
+      }
+    }))
+  } else {
+    NULL
+  }
+}
+
+
+# Insert HTML tag at any position
+tagInsertChild <- function(tag, child, position) {
+  tag$children <- append(tag$children, list(child), position - 1)
+  tag
+}
+
+
+status_2_color <- function(status) {
+  switch(
+    status, 
+    "primary" = "light-blue",
+    "success" = "green",
+    "danger" = "red",
+    "warning" = "yellow",
+    "info" = "aqua",
+    "navy" = "navy",
+    "teal" = "teal",
+    "purple" = "purple",
+    "orange" = "orange",
+    "maroon" = "maroon",
+    "black" = "black"
+  )
+}
+
+color_2_status <- function(color) {
+  switch(
+    color, 
+    "light-blue" = "primary",
+    "green" = "success",
+    "red" = "danger",
+    "yellow" = "warning",
+    "aqua" = "info",
+    "navy" = "navy",
+    "teal" = "teal",
+    "purple" = "purple",
+    "orange" = "orange",
+    "maroon" = "maroon",
+    "black" = "black"
+  )
+}
+
+
+waiter_show_on_load <- function(
+  html = waiter::spin_1(), color = "#333e48"
+){
+  
+  html <- as.character(html)
+  html <- gsub("\n", "", html)
+  
+  show <- sprintf(
+    "show_waiter(
+      null,
+      html = '%s', 
+      color = '%s'
+    );",
+    html, color
+  )
+  
+  shiny::HTML(sprintf("<script>%s</script>", show))
+  
 }

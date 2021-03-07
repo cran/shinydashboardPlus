@@ -1,22 +1,19 @@
-# Add an html dependency, without overwriting existing ones
-appendDependencies <- function(x, value) {
-  if (inherits(value, "html_dependency"))
-    value <- list(value)
-  
-  old <- attr(x, "html_dependencies", TRUE)
-  
-  htmltools::htmlDependencies(x) <- c(old, value)
-  x
-}
-
 # Add dashboard dependencies to a tag object
-addDeps <- function(x, md) {
+addDeps <- function(tag, md, options) {
   
   # always use minified files (https://www.minifier.org)
-  adminLTE_js <- "js/app.min.js"
-  custom_js <- "js/custom.js"
-  shinydashboard_js <- "shinydashboard.js"
+  adminLTE_js <- if (getOption("shiny.minified", TRUE)) {
+    "js/app.min.js"
+  } else {
+    "js/app.js"
+  }
+  shinydashboardPlus_js <- if (getOption("shiny.minified", TRUE)) {
+    "js/shinydashboardPlus.min.js"
+  } else {
+    "js/shinydashboardPlus.js"
+  }
   adminLTE_css <- c("css/AdminLTE.min.css", "css/_all-skins.min.css")
+  custom_css <- ("css/custom.css")
   
   # material design deps
   if (md) {
@@ -32,20 +29,36 @@ addDeps <- function(x, md) {
   }
   
   dashboardDeps <- list(
+    # additional options (this needs to be loaded before shinydashboardPlus deps)
+    htmltools::htmlDependency(
+      "options",
+      as.character(utils::packageVersion("shinydashboardPlus")),
+      src = c(file = system.file("shinydashboardPlus-2.0.0", package = "shinydashboardPlus")),
+      head = if (!is.null(options)) {
+        paste0(
+          "<script>var AdminLTEOptions = ", 
+          jsonlite::toJSON(
+            options, 
+            auto_unbox = TRUE,
+            pretty = TRUE
+          ),
+          ";</script>"
+        )
+      }
+    ),
     # custom adminLTE js and css for shinydashboardPlus
     htmltools::htmlDependency(
       "shinydashboardPlus",
       as.character(utils::packageVersion("shinydashboardPlus")),
-      c(file = system.file("shinydashboardPlus-0.6.0", package = "shinydashboardPlus")),
-      script = c(adminLTE_js, custom_js),
-      stylesheet = adminLTE_css
+      c(file = system.file("shinydashboardPlus-2.0.0", package = "shinydashboardPlus")),
+      script = c(adminLTE_js, shinydashboardPlus_js),
+      stylesheet = c(adminLTE_css, custom_css)
     ),
     # shinydashboard css and js deps
     htmltools::htmlDependency(
       "shinydashboard",
       as.character(utils::packageVersion("shinydashboard")),
       c(file = system.file(package = "shinydashboard")),
-      script = shinydashboard_js,
       stylesheet = "shinydashboard.css"
     ),
     # material design deps
@@ -60,5 +73,5 @@ addDeps <- function(x, md) {
     }
   )
   
-  appendDependencies(x, dashboardDeps)
+  shiny::tagList(tag, dashboardDeps)
 }

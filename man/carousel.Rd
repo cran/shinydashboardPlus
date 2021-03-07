@@ -2,12 +2,15 @@
 % Please edit documentation in R/useful-items.R
 \name{carousel}
 \alias{carousel}
+\alias{carouselItem}
 \title{AdminLTE2 carousel container}
 \usage{
 carousel(..., id, indicators = TRUE, width = 6, .list = NULL)
+
+carouselItem(..., caption = NULL, active = FALSE)
 }
 \arguments{
-\item{...}{Slot for \link{carouselItem}}
+\item{...}{Element such as images, iframe, ...}
 
 \item{id}{Carousel id. Must be unique.}
 
@@ -17,20 +20,25 @@ carousel(..., id, indicators = TRUE, width = 6, .list = NULL)
 
 \item{.list}{Should you need to pass \link{carouselItem} via \link{lapply} or similar,
 put these item here instead of passing them in ...}
+
+\item{caption}{Item caption.}
+
+\item{active}{Whether the item is active or not at start.}
 }
 \description{
-This creates a carousel
+\link{carousel} creates a carousel container to display media content.
+
+\link{carouselItem} creates a carousel item to insert in a \link{carousel}.
 }
 \examples{
 if (interactive()) {
  library(shiny)
  library(shinydashboard)
+ library(shinydashboardPlus)
+ 
  shinyApp(
-   ui = dashboardPagePlus(
-     header = dashboardHeaderPlus(
-      enable_rightsidebar = TRUE,
-      rightSidebarIcon = "gears"
-     ),
+   ui = dashboardPage(
+     header = dashboardHeader(),
      sidebar = dashboardSidebar(),
      body = dashboardBody(
       carousel(
@@ -45,8 +53,7 @@ if (interactive()) {
        )
       )
      ),
-     rightsidebar = rightSidebar(),
-     title = "Right Sidebar"
+     title = "Carousel"
    ),
    server = function(input, output) { }
  )

@@ -4,14 +4,33 @@
 \alias{starBlock}
 \title{AdminLTE2 starBlock}
 \usage{
-starBlock(maxstar = 5, grade, color = "yellow")
+starBlock(value, max = 5, color = "yellow")
 }
 \arguments{
-\item{maxstar}{Maximum number of stars by block.}
+\item{value}{Current score. Should be positive and lower or equal to max.}
 
-\item{grade}{Current score. Should be positive and lower or equal to maxstar.}
+\item{max}{Maximum number of stars by block.}
 
-\item{color}{Star color: see \code{validColors()} in the documentation.}
+\item{color}{Star color: see \code{validColors()} in the documentation.
+See below:
+\itemize{
+ \item \code{light-blue (primary status)}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#3c8dbc")}.
+ \item \code{red (danger status)}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#dd4b39")}.
+ \item \code{green (success status)}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#00a65a")}.
+ \item \code{aqua (info status)}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#00c0ef")}.
+ \item \code{yellow (warning status)}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#f39c12")}.
+ \item \code{blue}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#0073b7")}.
+ \item \code{navy}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#001F3F")}.
+ \item \code{teal}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#39CCCC")}.
+ \item \code{olive}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#3D9970")}.
+ \item \code{lime}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#01FF70")}.
+ \item \code{orange}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#FF851B")}.
+ \item \code{fuchsia}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#F012BE")}.
+ \item \code{purple}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#605ca8")}.
+ \item \code{maroon}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#D81B60")}.
+ \item \code{black}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#111")}.
+ \item \code{gray}: \Sexpr[results=rd, stage=install]{shinydashboardPlus:::rd_color_tag("#d2d6de")}.
+}}
 }
 \description{
 Create a starBlock item (ideal for rating)
@@ -20,6 +39,8 @@ Create a starBlock item (ideal for rating)
 if (interactive()) {
  library(shiny)
  library(shinydashboard)
+ library(shinydashboardPlus)
+ 
  shinyApp(
   ui = dashboardPage(
     dashboardHeader(),
@@ -27,10 +48,10 @@ if (interactive()) {
     dashboardBody(
      box(
       title = "Star example",
-      starBlock(grade = 5),
-      starBlock(grade = 5, color = "olive"),
-      starBlock(grade = 1, color = "maroon"),
-      starBlock(grade = 3, color = "teal")
+      starBlock(5),
+      starBlock(5, color = "olive"),
+      starBlock(1, color = "maroon"),
+      starBlock(3, color = "teal")
      )
     ),
     title = "starBlock"
