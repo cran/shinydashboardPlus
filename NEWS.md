@@ -1,3 +1,9 @@
+# shinydashboardPlus 2.0.2
+
+- Simple patch to fix wrong .Rbuildignore [rule](https://github.com/DivadNojnarg/outstanding-shiny-ui/issues/52).
+- Update internal file structure. 
+- Clean NOTE: https://cran.rstudio.com//web/checks/check_results_shinydashboardPlus.html
+
 # shinydashboardPlus 2.0.1
 
 This release is a patch without major changes.

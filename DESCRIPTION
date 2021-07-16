@@ -1,7 +1,7 @@
 Package: shinydashboardPlus
 Type: Package
 Title: Add More 'AdminLTE2' Components to 'shinydashboard'
-Version: 2.0.1
+Version: 2.0.2
 Authors@R: c(
   person("David", "Granjon", email = "dgranjon@ymail.com", role = c("aut", "cre")),
   person(family = "RinteRface", role = "cph"),
@@ -26,7 +26,7 @@ RoxygenNote: 7.1.1.9000
 VignetteBuilder: knitr
 RdMacros: lifecycle
 NeedsCompilation: no
-Packaged: 2021-04-26 14:58:23 UTC; granjda1
+Packaged: 2021-07-16 10:40:34 UTC; granjda1
 Author: David Granjon [aut, cre],
   RinteRface [cph],
   Almasaeed Studio [ctb, cph] (AdminLTE2 theme for Bootstrap 3),
@@ -34,4 +34,4 @@ Author: David Granjon [aut, cre],
   Winston Chang [ctb, cph] (Functions from shinydashboard),
   Victor Perrier [ctb] (improved the shinydashboardPlusGallery)
 Repository: CRAN
-Date/Publication: 2021-04-26 15:20:02 UTC
+Date/Publication: 2021-07-16 11:00:02 UTC
