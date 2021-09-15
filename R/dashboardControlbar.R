@@ -223,8 +223,7 @@ controlbarMenu <- function(..., id = NULL, selected = NULL) {
     ...,
     id = id,
     selected = selected,
-    type = "tabs",
-    position = NULL
+    type = "tabs"
   )
   
   # remove parent div causing CSS margin issues
@@ -248,8 +247,9 @@ controlbarMenu <- function(..., id = NULL, selected = NULL) {
 #' @inheritParams shiny::tabPanel
 #' @export
 #' @rdname controlbar
-controlbarItem <- shiny::tabPanel
-
+controlbarItem <- function(title, ..., value = title, icon = NULL) {
+  shiny::tabPanel(title, ..., value = value, icon = icon)
+}
 
 
 
