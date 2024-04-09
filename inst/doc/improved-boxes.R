@@ -114,7 +114,6 @@ knitr::include_graphics("figures/boxTools.png")
 #      observeEvent(input$update, {
 #        updateBoxSidebar("mycardsidebar")
 #      })
-#  
 #    }
 #  )
 
@@ -193,7 +192,6 @@ knitr::include_graphics("figures/userBox.png")
 #      title = "userBox"
 #    ),
 #    server = function(input, output) {
-#  
 #      observeEvent(input$pillItem, {
 #        if (input$pillItem == 2) {
 #          showModal(
@@ -265,7 +263,7 @@ knitr::include_graphics("figures/userBox.png")
 #    subtitle = "example-01.05.2018"
 #  )
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  shinyApp(
 #    ui = dashboardPage(
 #      dashboardHeader(),
@@ -287,7 +285,7 @@ knitr::include_graphics("figures/userBox.png")
 #              attachmentBlock(
 #                image = "https://www.sammobile.com/wp-content/uploads/2017/11/Camel.png",
 #                title = "Test",
-#                href = "http://google.com",
+#                href = "https://google.com",
 #                "This is the content"
 #              )
 #            ),
@@ -343,7 +341,7 @@ knitr::include_graphics("figures/userBox.png")
 #    }
 #  )
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  shinyApp(
 #    ui = dashboardPage(
 #      dashboardHeader(),
@@ -403,14 +401,13 @@ knitr::include_graphics("figures/userBox.png")
 #        )
 #      )
 #    ),
-#  
 #    server = function(input, output, session) {
 #      output$active_side <- renderUI({
 #        side <- if (input$myflipbox) "front" else "back"
 #        dashboardBadge(side, color = "blue")
 #      })
 #  
-#      output$active_side_2<- renderUI({
+#      output$active_side_2 <- renderUI({
 #        side <- if (input$myflipbox2) "front" else "back"
 #        dashboardBadge(side, color = "blue")
 #      })

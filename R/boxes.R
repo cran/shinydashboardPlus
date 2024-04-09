@@ -93,10 +93,10 @@
 #'          style = "circle"
 #'         ),
 #'         dropdownMenu = boxDropdown(
-#'          boxDropdownItem("Link to google", href = "http://www.google.com"),
+#'          boxDropdownItem("Link to google", href = "https://www.google.com"),
 #'          boxDropdownItem("item 2", href = "#"),
 #'          dropdownDivider(),
-#'          boxDropdownItem("item 3", href = "#", icon = icon("th"))
+#'          boxDropdownItem("item 3", href = "#", icon = icon("table-cells"))
 #'         ),
 #'         sidebar = boxSidebar(
 #'          startOpen = TRUE,
@@ -310,7 +310,7 @@ boxLabel <- function(text, status, style = "default") {
 #' @export
 #' @rdname boxSidebar
 boxSidebar <- function(..., id = NULL, width = 50, background = "#333a40", 
-                       startOpen = FALSE, icon = shiny::icon("cogs")) {
+                       startOpen = FALSE, icon = shiny::icon("gears")) {
   
   stopifnot(width >= 25 && width <= 100)
   
@@ -583,7 +583,7 @@ updateBoxSidebar <- function(id, session = shiny::getDefaultReactiveDomain()) {
 #'            boxDropdownItem("Click me", id = "dropdownItem", icon = icon("heart")),
 #'            boxDropdownItem("item 2", href = "https://www.google.com/"),
 #'            dropdownDivider(),
-#'            boxDropdownItem("item 3", icon = icon("th"))
+#'            boxDropdownItem("item 3", icon = icon("table-cells"))
 #'          ),
 #'          "My box"
 #'        )
@@ -1044,17 +1044,18 @@ socialBox <- function(..., title = NULL, footer = NULL, width = 6, height = NULL
 #' @param image User image.
 #' @param title A title, user name,...
 #' @param subtitle Any subtitle.
+#' @param href Target url or page.
 #'
 #' @rdname socialBox
 #'
 #' @export
-userBlock <- function(image, title, subtitle = NULL) {
+userBlock <- function(image, title, subtitle = NULL, href = "javascript:void(0)") {
   shiny::tags$div(
     class = "user-block",
     shiny::img(class = "img-circle", src = image),
     shiny::tags$span(
       class = "username",
-      shiny::a(href = "javascript:void(0)", title)
+      shiny::a(href, title)
     ),
     if (!is.null(subtitle)) shiny::tags$span(class = "description", subtitle)
   )

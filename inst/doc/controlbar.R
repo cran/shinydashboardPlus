@@ -40,7 +40,7 @@
 #    server = function(input, output) { }
 #  )
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  sidebarMenu(
 #    id = "sidebarMenu",
 #    lapply(1:3, function(i) {

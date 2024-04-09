@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 #         leftUi = tagList(
 #           dropdownButton(
 #             label = "Controls",
-#             icon = icon("sliders"),
+#             icon = icon("sliders-h"),
 #             status = "primary",
 #             circle = FALSE,
 #             sliderInput(
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 #               label_on = "NAs kept",
 #               label_off = "NAs removed",
 #               icon_on = icon("check"),
-#               icon_off = icon("remove")
+#               icon_off = icon("trash")
 #             )
 #           ),
 #           dropdownMenu(
@@ -57,7 +57,7 @@ knitr::opts_chunk$set(
 #          dropdownBlock(
 #            id = "mydropdown",
 #            title = "Dropdown 1",
-#            icon = "sliders",
+#            icon = "sliders-h",
 #            sliderInput(
 #              inputId = "n",
 #              label = "Number of observations",
@@ -68,13 +68,13 @@ knitr::opts_chunk$set(
 #              label_on = "NAs kept",
 #              label_off = "NAs removed",
 #              icon_on = icon("check"),
-#              icon_off = icon("remove")
+#              icon_off = icon("trash")
 #            )
 #          ),
 #          dropdownBlock(
 #            id = "mydropdown2",
 #            title = "Dropdown 2",
-#            icon = "sliders",
+#            icon = "sliders-h",
 #            prettySwitch(
 #              inputId = "switch4",
 #              label = "Fill switch with status:",
